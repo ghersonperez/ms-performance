@@ -14,8 +14,10 @@ import org.springframework.web.bind.annotation.RestController;
 import com.performance.dto.EvaluationDTO;
 import com.performance.dto.OperationResponse;
 import com.performance.dto.PageResponseDTO;
+import com.performance.dto.PerformanceProcessDTO;
 import com.performance.dto.ProcessTeamDTO;
 import com.performance.dto.TrackingInterface;
+import com.performance.services.IEvaluatedService;
 import com.performance.services.IEvaluatorService;
 
 @RestController()
@@ -25,6 +27,9 @@ public class PerformanceController {
 
 	@Autowired
 	private IEvaluatorService evaService;
+	
+	@Autowired
+	private IEvaluatedService evatedService;
 	
 	@GetMapping("/find/team")
 	public List<ProcessTeamDTO> findTeam(@RequestParam String idssff){
@@ -47,5 +52,21 @@ public class PerformanceController {
 			@RequestParam int vsize){
 		
 		return evaService.tracking(page, vsize);
+	}
+	@GetMapping("/find/myprocess")
+	public List<PerformanceProcessDTO> findmyProcess(@RequestParam String idssff){
+		
+		return evatedService.myprocess(idssff);
+	}
+	@GetMapping("/find/auto-evaluation")
+	public EvaluationDTO findAutoevaluation(@RequestParam Integer id){
+		
+		return evatedService.searchEvaluation(id);
+	}
+	
+	@PostMapping("/save/autoevaluation")
+	public OperationResponse saveAutoevaluation(@RequestBody EvaluationDTO dto){
+		
+		return evatedService.saveAutoEvaluation(dto);
 	}
 }

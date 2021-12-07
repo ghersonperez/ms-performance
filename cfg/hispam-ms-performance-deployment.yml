@@ -1,0 +1,86 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: ms-performance
+  namespace: hispam
+  labels:
+    app: "ms-performance"
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: ms-performance
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+      labels:
+        app: ms-performance
+    spec:
+      containers:
+        - name: ms-performance
+          image: acrhispam.azurecr.io/ms-performance:0.0.1-SNAPSHOT
+          imagePullPolicy: Always
+          ports:
+            - containerPort: 8085
+          env:
+           - name: ENV
+             value: ambiente
+           - name: SPRING_APPLICATION_JSON
+             value: '{"spring":{"cloud":{"config":{"uri":"http://ms-hispam-config-server-svc.hispam.svc.cluster.local:4051","profile":"dev"}}}}'
+          resources:
+            requests:
+              cpu: 100m
+              memory: 128Mi
+            limits:
+              cpu: 1000m
+              memory: 512Mi
+      imagePullSecrets:
+        - name: acr-hispam-registry
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: ms-performance-svc
+  namespace: hispam
+  labels:
+    app: "ms-performance"
+spec:
+  ports:
+    - port: 4042
+      targetPort: 8082
+      protocol: TCP
+      name: http
+  selector:
+    app: ms-performance
+
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: ms-performance-ingress-nginx
+  namespace: hispam
+  annotations:
+    kubernetes.io/ingress.class: nginx
+    nginx.ingress.kubernetes.io/enable-cors: "true"
+    nginx.ingress.kubernetes.io/cors-allow-headers: "request-id, request-date, content-type"
+    nginx.ingress.kubernetes.io/cors-allow-methods: "PUT, GET, POST, DELETE, PATCH, OPTIONS"
+    cert-manager.io/cluster-issuer: letsencrypt
+    nginx.ingress.kubernetes.io/configuration-snippet: |
+      more_set_headers "Ingress: $ingress_name";
+spec:
+  tls:
+    - hosts:
+        - aks-hispam-dev.eastus.cloudapp.azure.com
+      secretName: ms-performance-ingress-secret
+  rules:
+    - host: aks-hispam-dev.eastus.cloudapp.azure.com
+      http:
+        paths:
+          - backend:
+              service:
+                name: ms-performance-svc
+                port:
+                  number: 4042
+            path: /performance/v1/api
+            pathType: Prefix
