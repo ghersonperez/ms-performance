@@ -19,7 +19,7 @@ spec:
     spec:
       containers:
         - name: ms-performance
-          image: acrhispam.azurecr.io/ms-performance:0.0.2-SNAPSHOT
+          image: acrhispam.azurecr.io/ms-performance:0.0.3-SNAPSHOT
           imagePullPolicy: Always
           ports:
             - containerPort: 8085
