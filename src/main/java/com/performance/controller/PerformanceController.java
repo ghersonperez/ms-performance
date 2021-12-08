@@ -21,7 +21,6 @@ import com.performance.services.IEvaluatedService;
 import com.performance.services.IEvaluatorService;
 
 @RestController()
-@CrossOrigin(origins = "http://localhost:4200")
 @RequestMapping("/performance/v1/api")
 public class PerformanceController {
 
