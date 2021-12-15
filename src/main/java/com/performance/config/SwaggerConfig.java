@@ -22,13 +22,13 @@ public class SwaggerConfig {
 	@Bean
 	public Docket apiDocket() {
 		return new Docket(DocumentationType.SWAGGER_2).select()
-				.apis(RequestHandlerSelectors.basePackage("com.performance.controller"))
+				.apis(RequestHandlerSelectors.basePackage("com.performance.service.controller"))
 				.paths(PathSelectors.any()).build().forCodeGeneration(true).apiInfo(getApiInfo());
 	}
 
 	private ApiInfo getApiInfo() {
-		return new ApiInfo("Noticias API", "Servicio para obtener noticias", "0.0.1", "https://www.indracompany.com/",
-				new Contact("Ronald Rojas", "https://www.indracompany.com/", "rerojash@indracompany.com"), "LICENSE", "",
+		return new ApiInfo("Performance API", "Servicio para Performance", "0.0.2", "https://personas-hispam.telefonica.com/",
+				new Contact("Gherson Perez", "https://personas-hispam.telefonica.com/", "gherson.perez@telefonica.com"), "LICENSE", "",
 				Collections.emptyList());
 	}
 }

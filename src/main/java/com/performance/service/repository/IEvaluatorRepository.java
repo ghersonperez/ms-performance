@@ -1,0 +1,27 @@
+package com.performance.service.repository;
+
+import java.util.List;
+
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
+
+import com.performance.service.dto.TeamInterface;
+import com.performance.service.dto.TrackingInterface;
+import com.performance.service.entity.Evaluator;
+
+
+
+public interface IEvaluatorRepository extends JpaRepository<Evaluator, Integer> {
+	
+	@Query(nativeQuery = true, value = "call sp_team_performance(?1)")
+	List<TeamInterface> searchTeam(String idssff);
+	@Query(nativeQuery = true, value = "call sp_tracking(?1,?2)")
+	List<TrackingInterface> tracking(int page,int vsize);
+	
+	@Query(nativeQuery = true, value = "call sp_count_tracking()")
+	Integer countTracking();
+	
+	List<Evaluator> findByIdEvaluated(Integer idevaluated);
+	
+
+}
