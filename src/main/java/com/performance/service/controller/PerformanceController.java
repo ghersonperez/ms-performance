@@ -7,6 +7,7 @@ import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
@@ -21,7 +22,6 @@ import com.performance.shared.dto.OperationResponse;
 import com.performance.shared.dto.PageResponseDTO;
 
 @RestController()
-@CrossOrigin(origins = "http://localhost:4200")
 @RequestMapping("/performance/v1/api")
 public class PerformanceController {
 
@@ -32,9 +32,9 @@ public class PerformanceController {
 	private IEvaluatedService evatedService;
 	
 	@GetMapping("/find/team")
-	public List<ProcessTeamDTO> findTeam(@RequestParam String idssff){
+	public List<ProcessTeamDTO> findTeam(@RequestHeader String email){
 		
-		return evaService.getTeams(idssff);
+		return evaService.getTeams(email);
 	}
 	@GetMapping("/find/evaluation")
 	public EvaluationDTO findEvaluation(@RequestParam Integer id){
@@ -54,7 +54,7 @@ public class PerformanceController {
 		return evaService.tracking(page, vsize);
 	}
 	@GetMapping("/find/myprocess")
-	public List<PerformanceProcessDTO> findmyProcess(@RequestParam String email){
+	public List<PerformanceProcessDTO> findmyProcess(@RequestHeader String email){
 		
 		return evatedService.myprocess(email);
 	}
