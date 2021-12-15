@@ -32,9 +32,9 @@ public class PerformanceController {
 	private IEvaluatedService evatedService;
 	
 	@GetMapping("/find/team")
-	public List<ProcessTeamDTO> findTeam(@RequestHeader String email){
+	public List<ProcessTeamDTO> findTeam(@RequestHeader String user){
 		
-		return evaService.getTeams(email);
+		return evaService.getTeams(user);
 	}
 	@GetMapping("/find/evaluation")
 	public EvaluationDTO findEvaluation(@RequestParam Integer id){
@@ -54,9 +54,9 @@ public class PerformanceController {
 		return evaService.tracking(page, vsize);
 	}
 	@GetMapping("/find/myprocess")
-	public List<PerformanceProcessDTO> findmyProcess(@RequestHeader String email){
+	public List<PerformanceProcessDTO> findmyProcess(@RequestHeader String user){
 		
-		return evatedService.myprocess(email);
+		return evatedService.myprocess(user);
 	}
 	@GetMapping("/find/auto-evaluation")
 	public EvaluationDTO findAutoevaluation(@RequestParam Integer id){
