@@ -21,7 +21,6 @@ import com.performance.shared.dto.OperationResponse;
 import com.performance.shared.dto.PageResponseDTO;
 
 @RestController()
-@CrossOrigin(origins = "http://localhost:4200")
 @RequestMapping("/performance/v1/api")
 public class PerformanceController {
 
