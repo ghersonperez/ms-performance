@@ -16,17 +16,8 @@ import com.performance.shared.dto.MailDTO;
 import com.performance.shared.dto.MailMasterDTO;
 import com.performance.shared.service.MailService;
 
-
-
-
-
-
-
-
 @Service
 public class MailServiceImpl implements MailService{
-
-	
 	
 	@Value("${url-mail}")
 	String url;
@@ -40,12 +31,10 @@ public class MailServiceImpl implements MailService{
 		requestHeaders.add("UNICA-Application", "wappe");
 		requestHeaders.add("UNICA-PID", "550e8400-e29b-41d4-a716-446655440000");
 		requestHeaders.add("UNICA-User", "admin");
-		requestHeaders.add("UNICA-ServiceId", "550e8400-e29b-41d4-a716-446655440000");
-		
+		requestHeaders.add("UNICA-ServiceId", "550e8400-e29b-41d4-a716-446655440000");	
 		String urlTemplate = UriComponentsBuilder.fromHttpUrl(url).encode()
 				.toUriString();
-		
-		
+			
 		HttpEntity<MailMasterDTO> entity = new HttpEntity<>(new MailMasterDTO(mails), requestHeaders);
 		HttpEntity<Object> response = restTemplate.exchange(urlTemplate, HttpMethod.POST, entity,
 				Object.class);

@@ -1,5 +1,6 @@
 package com.performance.service.services.impl;
 
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
@@ -87,26 +88,6 @@ public class EvaluatedServiceImpl implements IEvaluatedService {
 				goalRepo.save(comment);
 			});
 			if (dto.isTerminated()) {
-				
-				/*new Thread(new Runnable() {
-					@Override
-					public void run() {
-						 List<Evaluator> evalu = evaluatorRepo.findByIdEvaluated(evaluation.getId());
-						if (!evalu.isEmpty()) {
-							String body = "<html>Estimados lideres <br/> <br/> Se le notifica que el/la colaborador/a " + evaluation.getName().toUpperCase()
-									+ " "
-									+ "ha culminado la autoevaluacion de Performance. "
-									+ "Ya puede ingresar a evaluarlo haciendo <a href='https://personas-hispam.telefonica.com' >click aqu&iacute.</a> <br/> <br/> <br/>" 
-									+ "Un saludo </html>";
-							String from = "personas.solucionesdigitales@telefonica.com";
-							String subject = "Notificacion del Proceso de Performance";
-							MailDTO mail = new MailDTO(from, evalu.stream().map(Evaluator::getEmailEvaluator).collect(Collectors.toList()), new ArrayList<>(),
-									new ArrayList<>(),subject, body, new ArrayList<>());
-							//mailService.sendMail(Arrays.asList(mail)); 
-							
-						}
-					}
-				}).start();*/
 				evaluation.setStatus(1);
 			}
 			evaluatedRepo.save(evaluation);
@@ -116,4 +97,23 @@ public class EvaluatedServiceImpl implements IEvaluatedService {
 		}
 	}
 
+	public void sendmail(Evaluated evaluation) {
+		new Thread(() -> {
+		List<Evaluator> evalu = evaluatorRepo.findByIdEvaluated(evaluation.getId());
+		if (!evalu.isEmpty()) {
+			String body = "<html>Estimados lideres <br/> <br/> Se le notifica que el/la colaborador/a " + evaluation.getName().toUpperCase()
+					+ " "
+					+ "ha culminado la autoevaluacion de Performance. "
+					+ "Ya puede ingresar a evaluarlo haciendo <a href='https://personas-hispam.telefonica.com' >click aqu&iacute.</a> <br/> <br/> <br/>" 
+					+ "Un saludo </html>";
+			String from = "personas.solucionesdigitales@telefonica.com";
+			String subject = "Notificacion del Proceso de Performance";
+			MailDTO mail = new MailDTO(from, evalu.stream().map(Evaluator::getEmailEvaluator).collect(Collectors.toList()), new ArrayList<>(),
+					new ArrayList<>(),subject, body, new ArrayList<>());
+			mailService.sendMail(Arrays.asList(mail)); 
+			
+		}
+		}).start();
+	}
+		
 }

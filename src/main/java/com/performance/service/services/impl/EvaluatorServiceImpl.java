@@ -5,6 +5,7 @@ import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -31,8 +32,6 @@ import com.performance.shared.dto.OperationResponse;
 import com.performance.shared.dto.PageResponseDTO;
 import com.performance.shared.service.MailService;
 
-
-
 @Service
 public class EvaluatorServiceImpl implements IEvaluatorService {
 
@@ -46,47 +45,49 @@ public class EvaluatorServiceImpl implements IEvaluatorService {
 	private IGoalCommentRepository commentRepo;
 	@Autowired
 	private IEvaluatedRepository evaluatedRepo;
-	
+
 	@Autowired
 	private MailService mailService;
 	
+	String errormessage ="Evaluacion no encontrada";
+
 	@Override
 	public List<ProcessTeamDTO> getTeams(String idssff) {
 		List<ProcessTeamDTO> info = new ArrayList<>();
-		proRepo.findAll().forEach(c->{
-			 info.add(new ProcessTeamDTO(c.getId(), c.getPeriod(), c.getName(), c.getStatus(), 
-					 evaRepo.searchTeam(idssff).stream().filter(ev->ev.getProcess()==c.getId()).
-					 	map(f-> new MyTeamDTO(f.getId(), f.getIdssff(), f.getName(), f.getPosition(), f.getBu(), f.getGender(), f.getProcess(), 0) )
-					 .collect(Collectors.toList())));
-		});
+		proRepo.findAll()
+				.forEach(
+						c -> info.add(new ProcessTeamDTO(c.getId(), c.getPeriod(), c.getName(), c.getStatus(),
+								evaRepo.searchTeam(idssff).stream().filter(ev -> ev.getProcess().equals(c.getId()))
+										.map(f -> new MyTeamDTO(f.getId(), f.getIdssff(), f.getName(), f.getPosition(),
+												f.getBu(), f.getGender(), f.getProcess(), 0))
+										.collect(Collectors.toList()))));
 		return info;
 	}
 
 	@Override
 	public EvaluationDTO searchEvaluation(Integer id) {
-		Evaluator tor = evaRepo.findById(id).orElseThrow( () -> new ResponseStatusException(HttpStatus.NOT_FOUND,"Evaluacion no encontrada")  );
-		Evaluated eva = evaluatedRepo.findById(tor.getIdEvaluated()).orElseThrow( () -> new ResponseStatusException(HttpStatus.NOT_FOUND,"Autoevaluacion no encontrada")  );
-		return new EvaluationDTO(tor.getId(), 
-				goalRepo.findByIdEvaluated(tor.getIdEvaluated())
-											.stream().map(c-> new GoalCommentDTO(c.getId(),c.getGoalDescription(),
-													commentRepo.findByIdGoalAndIdEvaluator(c.getId(), tor.getId())
-													.orElse(new GoalComment()).getComment(),c.getAutoComment())).collect(Collectors.toList()), 
-				tor.getCompanyOpen(), 
-				tor.getCompanyChallenging(), 
-				tor.getCompanyTrustworthy(), 
-				tor.getCommentaryFinally(), 
-				eva.getCompanyOpen(), 
-				eva.getCompanyChallenging(), 
-				eva.getCompanyTrustworthy(), 
-				eva.getCommentaryFinally(), 
-				tor.getCalification(), 
-				tor.getFinish(),eva.getStatus());
+		Evaluator tor = evaRepo.findById(id)
+				.orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, errormessage));
+		Evaluated eva = evaluatedRepo.findById(tor.getIdEvaluated())
+				.orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Autoevaluacion no encontrada"));
+		return new EvaluationDTO(tor.getId(),
+				goalRepo.findByIdEvaluated(tor.getIdEvaluated()).stream()
+						.map(c -> new GoalCommentDTO(c.getId(), c.getGoalDescription(),
+								commentRepo.findByIdGoalAndIdEvaluator(c.getId(), tor.getId()).orElse(new GoalComment())
+										.getComment(),
+								c.getAutoComment()))
+						.collect(Collectors.toList()),
+				tor.getCompanyOpen(), tor.getCompanyChallenging(), tor.getCompanyTrustworthy(),
+				tor.getCommentaryFinally(), eva.getCompanyOpen(), eva.getCompanyChallenging(),
+				eva.getCompanyTrustworthy(), eva.getCommentaryFinally(), tor.getCalification(), tor.getFinish(),
+				eva.getStatus());
 	}
 
 	@Override
 	public OperationResponse saveEvaluation(EvaluationDTO dto) {
 		try {
-			Evaluator evaluation = evaRepo.findById(dto.getId()).orElseThrow( () -> new ResponseStatusException(HttpStatus.NOT_FOUND,"Evaluacion no encontrada")  );
+			Evaluator evaluation = evaRepo.findById(dto.getId())
+					.orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, errormessage));
 			evaluation.setCompanyOpen(dto.getOpen());
 			evaluation.setCompanyChallenging(dto.getChallenging());
 			evaluation.setCompanyTrustworthy(dto.getTrust());
@@ -96,76 +97,82 @@ public class EvaluatorServiceImpl implements IEvaluatorService {
 			evaluation.setUpdatedBy("");
 			evaluation.setFinish(dto.isTerminated());
 			evaluation.setEnter(true);
-		
-			dto.getGoals().forEach(g->{
-				GoalComment comment= commentRepo.findByIdGoalAndIdEvaluator(g.getIdGoal(),dto.getId()).orElse(null);
-				 if(comment==null) {
-					 commentRepo.save(new GoalComment(g.getIdGoal(), dto.getId(), g.getComment())); 
-				 }else {
-					 comment.setComment(g.getComment());
-					 commentRepo.save(comment);
-				 }
-			});	
-			if(dto.isTerminated()) {
-				new Thread(new Runnable() {
-					@Override
-					public void run() {
-							boolean status = true;
-							String body;
-						List<Evaluator> evalu = evaRepo.findByIdEvaluated(evaluation.getIdEvaluated());
-						Evaluated evaluated = evaluatedRepo.findById(evaluation.getIdEvaluated()).orElseThrow( () -> new ResponseStatusException(HttpStatus.NOT_FOUND,"Evaluacion no encontrada")  );
-						Integer average =  (int) Math.round(evalu.stream().mapToInt(Evaluator::getCalification).average().getAsDouble());
-						evaluated.setCalification(average);
-						evaluatedRepo.save(evaluated);
-						if (evalu.size()>1 ) {
-							for(Evaluator e:evalu.stream().filter(c->!Objects.equals(c.getId(), dto.getId())).collect(Collectors.toList())) {
-								if(!e.getFinish()) {
-									status=false;
-									break;
-								}
-							}
-							if(!status) {
-									body = "<html>Estimados lideres <br/> <br/> Se le notifica que el l&iacuteder " + evaluation.getNameEvaluator().toUpperCase()
-										+ " "
-										+ "ha culminado la evaluacion de Performance del colaborador  " + evaluated.getName().toUpperCase() +" <br/> <br/> "
-										+ "Ya puede ingresar a evaluarlo haciendo <a href='https://personas-hispam.telefonica.com' >click aqu&iacute.</a> <br/> <br/> <br/>" 
-										+ "Un saludo </html>";
-								
-							}else {
-								
-							
-								body = "<html>Estimados lideres <br/> <br/> Se le notifica que todos los lideres culminaron con la evaluacion del colaborador "
-										+ evaluated.getName().toUpperCase()+" <br/> <br/>" 
-										+ "El promedio de calificacion es " + average + "<br/> <br/> <br/>"
-										+ "Un saludo </html>";
-								
-							}
-							String from = "personas.solucionesdigitales@telefonica.com";
-							String subject = "Notificacion del Proceso de Performance";
-							MailDTO mail = new MailDTO(from,!status? evalu.stream().filter(c->!c.getFinish()).map(Evaluator::getEmailEvaluator).collect(Collectors.toList()):
-								evalu.stream().map(Evaluator::getEmailEvaluator).collect(Collectors.toList()), new ArrayList<>(),
-									new ArrayList<>(),subject, body, new ArrayList<>());
-							mailService.sendMail(Arrays.asList(mail));
-							evaRepo.save(evaluation);
-						}
-					}
-				}).start();
+
+			dto.getGoals().forEach(g -> {
+				Optional<GoalComment> comment = commentRepo.findByIdGoalAndIdEvaluator(g.getIdGoal(), dto.getId());
+				comment.ifPresentOrElse(ab -> {
+					ab.setComment(g.getComment());
+					commentRepo.save(ab);
+				}, () -> 
+					commentRepo.save(new GoalComment(g.getIdGoal(), dto.getId(), g.getComment()))
+				);
+			});
+			
+			if (dto.isTerminated()) {
+					sendEmail(evaluation, dto);
 			}
-			
-			
-			
-			
-			
+
 			return new OperationResponse(true, dto.getId());
 		} catch (Exception e) {
-			return new OperationResponse(true, e.getMessage());
+			return new OperationResponse(false, e.getMessage());
 		}
 	}
+	
+	public void sendEmail(Evaluator evaluator,EvaluationDTO dto) {
+		
+		new Thread(() -> {
+			List<Evaluator> evalu = evaRepo.findByIdEvaluated(evaluator.getIdEvaluated());
+			Evaluated evaluated = evaluatedRepo.findById(evaluator.getIdEvaluated()).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, errormessage));
+			Integer average = (int) Math.round(evalu.stream().mapToInt(Evaluator::getCalification).average().getAsDouble());
+			evaluated.setCalification(average);
+			evaluatedRepo.save(evaluated);
+		
+			if (evalu.size() > 1) {
+				String from = "personas.solucionesdigitales@telefonica.com";
+				String subject = "Notificacion del Proceso de Performance";
+		
+				evalu.stream().filter
+				(c -> !Objects.equals(c.getId(), dto.getId()) && !c.getFinish()).findFirst().ifPresentOrElse(value->{
+					String body;
+					body = "<html>Estimados lideres <br/> <br/> Se le notifica que todos los lideres culminaron con la evaluacion del colaborador "
+							+ evaluated.getName().toUpperCase() + " <br/> <br/>"
+							+ "El promedio de calificacion es " + average + "<br/> <br/> <br/>"
+							+ "Un saludo </html>";
+					MailDTO mail = new MailDTO(from,  
+							evalu.stream().map(Evaluator::getEmailEvaluator).collect(Collectors.toList()),
+							new ArrayList<>(), 
+							new ArrayList<>(), 
+							subject, 
+							body, 
+							new ArrayList<>());
+					 mailService.sendMail(Arrays.asList(mail));
+				}, ()->{
+					String body;
+					body = "<html>Estimados lideres <br/> <br/> Se le notifica que el l&iacuteder "
+							+ evaluator.getNameEvaluator().toUpperCase() + " "
+							+ "ha culminado la evaluacion de Performance del colaborador  "
+							+ evaluated.getName().toUpperCase() + " <br/> <br/> "
+							+ "Ya puede ingresar a evaluarlo haciendo <a href='https://personas-hispam.telefonica.com' >click aqu&iacute.</a> <br/> <br/> <br/>"
+							+ "Un saludo </html>";
+					MailDTO	mail = new MailDTO(from, 
+							evalu.stream().filter(c -> !c.getFinish()).map(Evaluator::getEmailEvaluator).collect(Collectors.toList()),
+							new ArrayList<>(), 
+							new ArrayList<>(), 
+							subject, 
+							body, 
+							new ArrayList<>());
+					mailService.sendMail(Arrays.asList(mail));
+				});
+				evaRepo.save(evaluator);
+			}
+		}).start();
+	}
+
 
 	@Override
-	public PageResponseDTO<TrackingInterface> tracking(int page,int vsize) {
-		int total =evaRepo.countTracking();
-		return  new PageResponseDTO<>(page,vsize,total,evaRepo.tracking(page * vsize, vsize));
+	public PageResponseDTO<TrackingInterface> tracking(int page, int vsize) {
+		int total = evaRepo.countTracking();
+		return new PageResponseDTO<>(page, vsize, total, evaRepo.tracking(page * vsize, vsize));
 	}
 
 }

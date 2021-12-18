@@ -1,0 +1,8 @@
+spring:
+  application:
+    name: msperformance
+  cloud:
+    config:
+      name: msperformance
+  profiles:
+    active: dev,cert,prod
