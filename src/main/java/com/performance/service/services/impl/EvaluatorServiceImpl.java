@@ -101,10 +101,15 @@ public class EvaluatorServiceImpl implements IEvaluatorService {
 			dto.getGoals().forEach(g -> {
 				Optional<GoalComment> comment = commentRepo.findByIdGoalAndIdEvaluator(g.getIdGoal(), dto.getId());
 				comment.ifPresentOrElse(ab -> {
+					System.out.println("Existe "+ab.getId());
 					ab.setComment(g.getComment());
 					commentRepo.save(ab);
-				}, () -> 
-					commentRepo.save(new GoalComment(g.getIdGoal(), dto.getId(), g.getComment()))
+				}, () -> {
+					System.out.println("Nuevo");
+					commentRepo.save(new GoalComment(g.getIdGoal(), dto.getId(), g.getComment()));
+				}
+					
+					
 				);
 			});
 			
