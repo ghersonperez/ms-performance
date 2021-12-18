@@ -134,20 +134,6 @@ public class EvaluatorServiceImpl implements IEvaluatorService {
 				evalu.stream().filter
 				(c -> !Objects.equals(c.getId(), dto.getId()) && !c.getFinish()).findFirst().ifPresentOrElse(value->{
 					String body;
-					body = "<html>Estimados lideres <br/> <br/> Se le notifica que todos los lideres culminaron con la evaluacion del colaborador "
-							+ evaluated.getName().toUpperCase() + " <br/> <br/>"
-							+ "El promedio de calificacion es " + average + "<br/> <br/> <br/>"
-							+ "Un saludo </html>";
-					MailDTO mail = new MailDTO(from,  
-							evalu.stream().map(Evaluator::getEmailEvaluator).collect(Collectors.toList()),
-							new ArrayList<>(), 
-							new ArrayList<>(), 
-							subject, 
-							body, 
-							new ArrayList<>());
-					 mailService.sendMail(Arrays.asList(mail));
-				}, ()->{
-					String body;
 					body = "<html>Estimados lideres <br/> <br/> Se le notifica que el l&iacuteder "
 							+ evaluator.getNameEvaluator().toUpperCase() + " "
 							+ "ha culminado la evaluacion de Performance del colaborador  "
@@ -162,6 +148,21 @@ public class EvaluatorServiceImpl implements IEvaluatorService {
 							body, 
 							new ArrayList<>());
 					mailService.sendMail(Arrays.asList(mail));
+				}, ()->{
+					String body;
+					body = "<html>Estimados lideres <br/> <br/> Se le notifica que todos los lideres culminaron con la evaluacion del colaborador "
+							+ evaluated.getName().toUpperCase() + " <br/> <br/>"
+							+ "El promedio de calificacion es " + average + "<br/> <br/> <br/>"
+							+ "Un saludo </html>";
+					MailDTO mail = new MailDTO(from,  
+							evalu.stream().map(Evaluator::getEmailEvaluator).collect(Collectors.toList()),
+							new ArrayList<>(), 
+							new ArrayList<>(), 
+							subject, 
+							body, 
+							new ArrayList<>());
+					 mailService.sendMail(Arrays.asList(mail));
+					
 				});
 				evaRepo.save(evaluator);
 			}

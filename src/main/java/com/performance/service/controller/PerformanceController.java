@@ -3,6 +3,7 @@ package com.performance.service.controller;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -32,7 +33,7 @@ public class PerformanceController {
 	
 	@GetMapping("/find/team")
 	public List<ProcessTeamDTO> findTeam(@RequestHeader String user){
-		
+		user="gherson.perez@telefonica.com";
 		return evaService.getTeams(user);
 	}
 	@GetMapping("/find/evaluation")
