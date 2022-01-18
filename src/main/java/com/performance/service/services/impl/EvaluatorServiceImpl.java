@@ -146,8 +146,9 @@ public class EvaluatorServiceImpl implements IEvaluatorService {
 								evalu.stream().map(Evaluator::getEmailEvaluator).collect(Collectors.toList()), new ArrayList<>(),
 									new ArrayList<>(),subject, body, new ArrayList<>());
 							mailService.sendMail(Arrays.asList(mail));
-							evaRepo.save(evaluation);
+							
 						}
+						evaRepo.save(evaluation);
 					}
 				}).start();
 			}

@@ -88,7 +88,7 @@ public class EvaluatedServiceImpl implements IEvaluatedService {
 			});
 			if (dto.isTerminated()) {
 				
-				/*new Thread(new Runnable() {
+				new Thread(new Runnable() {
 					@Override
 					public void run() {
 						 List<Evaluator> evalu = evaluatorRepo.findByIdEvaluated(evaluation.getId());
@@ -102,11 +102,11 @@ public class EvaluatedServiceImpl implements IEvaluatedService {
 							String subject = "Notificacion del Proceso de Performance";
 							MailDTO mail = new MailDTO(from, evalu.stream().map(Evaluator::getEmailEvaluator).collect(Collectors.toList()), new ArrayList<>(),
 									new ArrayList<>(),subject, body, new ArrayList<>());
-							//mailService.sendMail(Arrays.asList(mail)); 
+							mailService.sendMail(Arrays.asList(mail)); 
 							
 						}
 					}
-				}).start();*/
+				}).start();
 				evaluation.setStatus(1);
 			}
 			evaluatedRepo.save(evaluation);
