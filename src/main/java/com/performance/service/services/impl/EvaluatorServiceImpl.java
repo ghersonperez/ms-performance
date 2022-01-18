@@ -153,7 +153,7 @@ public class EvaluatorServiceImpl implements IEvaluatorService {
 				}).start();
 			}
 			
-			
+			evaRepo.save(evaluation);
 			
 			
 			
