@@ -10,6 +10,7 @@ import java.util.stream.Collectors;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.server.ResponseStatusException;
 
 import com.performance.service.dto.EvaluationDTO;
@@ -72,7 +73,7 @@ public class EvaluatedServiceImpl implements IEvaluatedService {
 	}
 
 	@Override
-	public OperationResponse saveAutoEvaluation(EvaluationDTO dto) {
+	public OperationResponse saveAutoEvaluation(EvaluationDTO dto, String user) {
 		try {
 			Evaluated evaluation = evaluatedRepo.findById(dto.getId()).orElseThrow(
 					() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "AutoEvaluacion no encontrada"));
@@ -81,7 +82,7 @@ public class EvaluatedServiceImpl implements IEvaluatedService {
 			evaluation.setCompanyTrustworthy(dto.getTrust());
 			evaluation.setCommentaryFinally(dto.getCommentFinally());
 			evaluation.setUpdatedAt(new Date());
-			evaluation.setUpdatedBy("");
+			evaluation.setUpdatedBy(user);
 			evaluation.setFinish(dto.isTerminated());
 			evaluation.setEnter(true);
 			dto.getGoals().forEach(g -> {

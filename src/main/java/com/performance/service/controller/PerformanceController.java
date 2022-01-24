@@ -33,6 +33,7 @@ public class PerformanceController {
 	
 	@GetMapping("/find/team")
 	public List<ProcessTeamDTO> findTeam(@RequestHeader String user){
+		user="gherson.perez@telefonica.com";
 		return evaService.getTeams(user);
 	}
 	@GetMapping("/find/evaluation")
@@ -41,9 +42,9 @@ public class PerformanceController {
 		return evaService.searchEvaluation(id);
 	}
 	@PostMapping("/save/evaluation")
-	public OperationResponse saveEvaluation(@RequestBody EvaluationDTO dto,@RequestHeader String email){
+	public OperationResponse saveEvaluation(@RequestBody EvaluationDTO dto,@RequestHeader String user){
 		
-		return evaService.saveEvaluation(dto,email);
+		return evaService.saveEvaluation(dto,user);
 	}
 	
 	@GetMapping("/tracking")
@@ -64,9 +65,9 @@ public class PerformanceController {
 	}
 	
 	@PostMapping("/save/autoevaluation")
-	public OperationResponse saveAutoevaluation(@RequestBody EvaluationDTO dto){
+	public OperationResponse saveAutoevaluation(@RequestBody EvaluationDTO dto,@RequestHeader String user){
 		
-		return evatedService.saveAutoEvaluation(dto);
+		return evatedService.saveAutoEvaluation(dto,user);
 	}
 	
 	@GetMapping("/report/autoevaluacion")
@@ -74,17 +75,17 @@ public class PerformanceController {
 			@RequestParam Integer report,
 			@RequestParam List<String> filters,
 			@RequestHeader String email,
-			@RequestHeader Integer user){
+			@RequestHeader Integer id){
 		
-		evatedService.sendReport(Integer.parseInt(filters.get(0)), report, email, user);
+		evatedService.sendReport(Integer.parseInt(filters.get(0)), report, email, 2434);
 	}
 	@GetMapping("/report/evaluacion")
 	public void reportEvaluacion(	
 			@RequestParam Integer report,
 			@RequestParam List<String> filters,
 			@RequestHeader String email,
-			@RequestHeader Integer user){
+			@RequestHeader Integer id){
 		
-		evaService.sendReport(Integer.parseInt(filters.get(0)), report, email, user);
+		evaService.sendReport(Integer.parseInt(filters.get(0)), report, email, 2434);
 	}
 }

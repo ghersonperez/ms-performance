@@ -14,7 +14,7 @@ public interface IEvaluatedService {
 	
 	EvaluationDTO searchEvaluation(Integer id);
 	
-	OperationResponse saveAutoEvaluation(EvaluationDTO evaluation);
+	OperationResponse saveAutoEvaluation(EvaluationDTO evaluation,String user);
 	
 	void sendReport(Integer process,Integer idrepo,String email,Integer user);
 
