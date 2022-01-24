@@ -23,9 +23,10 @@ import com.performance.service.repository.IEvaluatorRepository;
 import com.performance.service.repository.IGoalRepository;
 import com.performance.service.repository.IProcessRepository;
 import com.performance.service.services.IEvaluatedService;
+import com.performance.shared.dto.DataReport;
 import com.performance.shared.dto.MailDTO;
 import com.performance.shared.dto.OperationResponse;
-import com.performance.shared.service.MailService;
+import com.performance.shared.service.SharedService;
 import com.performance.service.entity.Process;
 
 
@@ -45,7 +46,8 @@ public class EvaluatedServiceImpl implements IEvaluatedService {
 	private IGoalRepository goalRepo;
 
 	@Autowired
-	private MailService mailService;
+	private SharedService sharedService;
+	
 
 	@Override
 	public List<PerformanceProcessDTO> myprocess(String email) {
@@ -88,6 +90,27 @@ public class EvaluatedServiceImpl implements IEvaluatedService {
 				goalRepo.save(comment);
 			});
 			if (dto.isTerminated()) {
+
+				
+				new Thread(new Runnable() {
+					@Override
+					public void run() {
+						 List<Evaluator> evalu = evaluatorRepo.findByIdEvaluated(evaluation.getId());
+						if (!evalu.isEmpty()) {
+							String body = "<html>Estimados lideres <br/> <br/> Se le notifica que el/la colaborador/a " + evaluation.getName().toUpperCase()
+									+ " "
+									+ "ha culminado la autoevaluacion de Performance. "
+									+ "Ya puede ingresar a evaluarlo haciendo <a href='https://personas-hispam.telefonica.com' >click aqu&iacute.</a> <br/> <br/> <br/>" 
+									+ "Un saludo </html>";
+							String from = "personas.solucionesdigitales@telefonica.com";
+							String subject = "Notificacion del Proceso de Performance";
+							MailDTO mail = new MailDTO(from, evalu.stream().map(Evaluator::getEmailEvaluator).collect(Collectors.toList()), new ArrayList<>(),
+									new ArrayList<>(),subject, body, new ArrayList<>());
+							sharedService.sendMail(Arrays.asList(mail)); 
+							
+						}
+					}
+				}).start();
 				evaluation.setStatus(1);
 			}
 			evaluatedRepo.save(evaluation);
@@ -96,6 +119,7 @@ public class EvaluatedServiceImpl implements IEvaluatedService {
 			return new OperationResponse(true, e.getMessage());
 		}
 	}
+
 
 	public void sendmail(Evaluated evaluation) {
 		new Thread(() -> {
@@ -110,10 +134,25 @@ public class EvaluatedServiceImpl implements IEvaluatedService {
 			String subject = "Notificacion del Proceso de Performance";
 			MailDTO mail = new MailDTO(from, evalu.stream().map(Evaluator::getEmailEvaluator).collect(Collectors.toList()), new ArrayList<>(),
 					new ArrayList<>(),subject, body, new ArrayList<>());
-			mailService.sendMail(Arrays.asList(mail)); 
+			sharedService.sendMail(Arrays.asList(mail)); 
 			
 		}
 		}).start();
 	}
 		
+
+	@Override
+	public void sendReport(Integer process,Integer idrepo,String email,Integer user) {
+		
+		List<Object[]> data = evaluatedRepo.reportAutoevaluacion(process);
+		DataReport info = new DataReport();
+		info.setData(data);
+		info.setModule("performance");
+		info.setReport(idrepo);
+		info.setEmail(email);
+		info.setUser(user);
+		sharedService.generateReport(info);
+		
+	}
+
 }

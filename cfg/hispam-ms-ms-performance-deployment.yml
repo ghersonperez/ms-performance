@@ -19,7 +19,11 @@ spec:
     spec:
       containers:
         - name: ms-performance
+<<<<<<< HEAD
           image: acrhispam.azurecr.io/ms-performance:0.1.2-SNAPSHOT
+=======
+          image: acrhispam.azurecr.io/ms-performance:0.0.4
+>>>>>>> main
           imagePullPolicy: Always
           ports:
             - containerPort: 8085
@@ -27,7 +31,7 @@ spec:
            - name: ENV
              value: ambiente
            - name: SPRING_APPLICATION_JSON
-             value: '{"spring":{"cloud":{"config":{"uri":"http://ms-hispam-config-server-svc.hispam.svc.cluster.local:4051","profile":"dev"}}}}'
+             value: '{"spring":{"cloud":{"config":{"uri":"http://ms-hispam-config-server-svc.hispam.svc.cluster.local:4051","profile":"prod"}}}}'
           resources:
             requests:
               cpu: 100m
@@ -65,16 +69,16 @@ metadata:
     nginx.ingress.kubernetes.io/enable-cors: "true"
     nginx.ingress.kubernetes.io/cors-allow-headers: "request-id, request-date, content-type"
     nginx.ingress.kubernetes.io/cors-allow-methods: "PUT, GET, POST, DELETE, PATCH, OPTIONS"
-    cert-manager.io/cluster-issuer: letsencrypt
+    cert-manager.io/cluster-issuer: letsencrypt-hispam
     nginx.ingress.kubernetes.io/configuration-snippet: |
       more_set_headers "Ingress: $ingress_name";
 spec:
   tls:
     - hosts:
-        - aks-hispam-dev.eastus.cloudapp.azure.com
+        - aks-hispam-prod.eastus.cloudapp.azure.com
       secretName: ms-performance-ingress-secret
   rules:
-    - host: aks-hispam-dev.eastus.cloudapp.azure.com
+    - host: aks-hispam-prod.eastus.cloudapp.azure.com
       http:
         paths:
           - backend:

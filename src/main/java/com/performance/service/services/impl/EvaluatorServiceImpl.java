@@ -30,7 +30,7 @@ import com.performance.service.services.IEvaluatorService;
 import com.performance.shared.dto.MailDTO;
 import com.performance.shared.dto.OperationResponse;
 import com.performance.shared.dto.PageResponseDTO;
-import com.performance.shared.service.MailService;
+import com.performance.shared.service.SharedService;
 
 @Service
 public class EvaluatorServiceImpl implements IEvaluatorService {
@@ -47,7 +47,7 @@ public class EvaluatorServiceImpl implements IEvaluatorService {
 	private IEvaluatedRepository evaluatedRepo;
 
 	@Autowired
-	private MailService mailService;
+	private SharedService mailService;
 	
 	String errormessage ="Evaluacion no encontrada";
 
@@ -84,7 +84,7 @@ public class EvaluatorServiceImpl implements IEvaluatorService {
 	}
 
 	@Override
-	public OperationResponse saveEvaluation(EvaluationDTO dto) {
+	public OperationResponse saveEvaluation(EvaluationDTO dto,String email) {
 		try {
 			Evaluator evaluation = evaRepo.findById(dto.getId())
 					.orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, errormessage));
@@ -94,20 +94,65 @@ public class EvaluatorServiceImpl implements IEvaluatorService {
 			evaluation.setCommentaryFinally(dto.getCommentFinally());
 			evaluation.setCalification(dto.getCalification());
 			evaluation.setUpdatedAt(new Date());
-			evaluation.setUpdatedBy("");
+			evaluation.setUpdatedBy(email);
 			evaluation.setFinish(dto.isTerminated());
 			evaluation.setEnter(true);
-
-			dto.getGoals().forEach(g -> {
-				Optional<GoalComment> comment = commentRepo.findByIdGoalAndIdEvaluator(g.getIdGoal(), dto.getId());
-				comment.ifPresentOrElse(ab -> {
-					ab.setComment(g.getComment());
-					commentRepo.save(ab);
-				}, () -> 
-					commentRepo.save(new GoalComment(g.getIdGoal(), dto.getId(), g.getComment()))
-				);
-			});
-			
+		
+			dto.getGoals().forEach(g->{
+				GoalComment comment= commentRepo.findByIdGoalAndIdEvaluator(g.getIdGoal(),dto.getId()).orElse(null);
+				 if(comment==null) {
+					 commentRepo.save(new GoalComment(g.getIdGoal(), dto.getId(), g.getComment())); 
+				 }else {
+					 comment.setComment(g.getComment());
+					 commentRepo.save(comment);
+				 }
+			});	
+			if(dto.isTerminated()) {
+				new Thread(new Runnable() {
+					@Override
+					public void run() {
+							boolean status = true;
+							String body;
+						List<Evaluator> evalu = evaRepo.findByIdEvaluated(evaluation.getIdEvaluated());
+						Evaluated evaluated = evaluatedRepo.findById(evaluation.getIdEvaluated()).orElseThrow( () -> new ResponseStatusException(HttpStatus.NOT_FOUND,"Evaluacion no encontrada")  );
+						Integer average =  (int) Math.round(evalu.stream().mapToInt(Evaluator::getCalification).average().getAsDouble());
+						evaluated.setCalification(average);
+						evaluatedRepo.save(evaluated);
+						if (evalu.size()>1 ) {
+							for(Evaluator e:evalu.stream().filter(c->!Objects.equals(c.getId(), dto.getId())).collect(Collectors.toList())) {
+								if(!e.getFinish()) {
+									status=false;
+									break;
+								}
+							}
+							if(!status) {
+									body = "<html>Estimados lideres <br/> <br/> Se le notifica que el l&iacuteder " + evaluation.getNameEvaluator().toUpperCase()
+										+ " "
+										+ "ha culminado la evaluacion de Performance del colaborador  " + evaluated.getName().toUpperCase() +" <br/> <br/> "
+										+ "Ya puede ingresar a evaluarlo haciendo <a href='https://personas-hispam.telefonica.com' >click aqu&iacute.</a> <br/> <br/> <br/>" 
+										+ "Un saludo </html>";
+								
+							}else {
+								
+							
+								body = "<html>Estimados lideres <br/> <br/> Se le notifica que todos los lideres culminaron con la evaluacion del colaborador "
+										+ evaluated.getName().toUpperCase()+" <br/> <br/>" 
+										+ "El promedio de calificacion es " + average + "<br/> <br/> <br/>"
+										+ "Un saludo </html>";
+								
+							}
+							String from = "personas.solucionesdigitales@telefonica.com";
+							String subject = "Notificacion del Proceso de Performance";
+							MailDTO mail = new MailDTO(from,!status? evalu.stream().filter(c->!c.getFinish()).map(Evaluator::getEmailEvaluator).collect(Collectors.toList()):
+								evalu.stream().map(Evaluator::getEmailEvaluator).collect(Collectors.toList()), new ArrayList<>(),
+									new ArrayList<>(),subject, body, new ArrayList<>());
+							mailService.sendMail(Arrays.asList(mail));
+						}
+						evaRepo.save(evaluation);
+					}
+				}).start();
+			}
+			evaRepo.save(evaluation);			
 			if (dto.isTerminated()) {
 					sendEmail(evaluation, dto);
 			}
