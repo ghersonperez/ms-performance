@@ -12,9 +12,10 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponentsBuilder;
 
+import com.performance.shared.dto.DataReport;
 import com.performance.shared.dto.MailDTO;
 import com.performance.shared.dto.MailMasterDTO;
-import com.performance.shared.service.MailService;
+import com.performance.shared.service.SharedService;
 
 
 
@@ -24,12 +25,15 @@ import com.performance.shared.service.MailService;
 
 
 @Service
-public class MailServiceImpl implements MailService{
+public class SharedServiceImpl implements SharedService{
 
 	
 	
 	@Value("${url-mail}")
 	String url;
+	
+	@Value("${url-report}")
+	String urlreport;
 	
 	@Override
 	public void sendMail(List<MailDTO> mails) {
@@ -52,6 +56,23 @@ public class MailServiceImpl implements MailService{
 		
 		response.getBody();
 		
+		
+	}
+
+	@Override
+	public void generateReport(DataReport data) {
+		RestTemplate restTemplate = new RestTemplate();
+
+		HttpHeaders requestHeaders = new HttpHeaders();
+		requestHeaders.setContentType(MediaType.APPLICATION_JSON);
+		requestHeaders.add("Ocp-Apim-Subscription-Key", "f60aac663e674ad1a899993ae09c41e9");
+		requestHeaders.setAccept(Arrays.asList(MediaType.APPLICATION_JSON));
+		
+
+		HttpEntity<DataReport> entity = new HttpEntity<>(data, requestHeaders);
+		HttpEntity<Void> response = restTemplate.exchange(urlreport, HttpMethod.POST, entity, Void.class);
+		
+		System.out.println(response.getBody());
 		
 	}
 

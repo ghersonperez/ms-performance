@@ -29,7 +29,7 @@ import com.performance.service.services.IEvaluatorService;
 import com.performance.shared.dto.MailDTO;
 import com.performance.shared.dto.OperationResponse;
 import com.performance.shared.dto.PageResponseDTO;
-import com.performance.shared.service.MailService;
+import com.performance.shared.service.SharedService;
 
 
 
@@ -48,7 +48,7 @@ public class EvaluatorServiceImpl implements IEvaluatorService {
 	private IEvaluatedRepository evaluatedRepo;
 	
 	@Autowired
-	private MailService mailService;
+	private SharedService mailService;
 	
 	@Override
 	public List<ProcessTeamDTO> getTeams(String idssff) {
