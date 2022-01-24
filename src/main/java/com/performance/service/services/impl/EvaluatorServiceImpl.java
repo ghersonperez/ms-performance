@@ -27,6 +27,7 @@ import com.performance.service.repository.IGoalCommentRepository;
 import com.performance.service.repository.IGoalRepository;
 import com.performance.service.repository.IProcessRepository;
 import com.performance.service.services.IEvaluatorService;
+import com.performance.shared.dto.DataReport;
 import com.performance.shared.dto.MailDTO;
 import com.performance.shared.dto.OperationResponse;
 import com.performance.shared.dto.PageResponseDTO;
@@ -47,7 +48,7 @@ public class EvaluatorServiceImpl implements IEvaluatorService {
 	private IEvaluatedRepository evaluatedRepo;
 
 	@Autowired
-	private SharedService mailService;
+	private SharedService sharedService;
 	
 	String errormessage ="Evaluacion no encontrada";
 
@@ -107,51 +108,6 @@ public class EvaluatorServiceImpl implements IEvaluatorService {
 					 commentRepo.save(comment);
 				 }
 			});	
-			if(dto.isTerminated()) {
-				new Thread(new Runnable() {
-					@Override
-					public void run() {
-							boolean status = true;
-							String body;
-						List<Evaluator> evalu = evaRepo.findByIdEvaluated(evaluation.getIdEvaluated());
-						Evaluated evaluated = evaluatedRepo.findById(evaluation.getIdEvaluated()).orElseThrow( () -> new ResponseStatusException(HttpStatus.NOT_FOUND,"Evaluacion no encontrada")  );
-						Integer average =  (int) Math.round(evalu.stream().mapToInt(Evaluator::getCalification).average().getAsDouble());
-						evaluated.setCalification(average);
-						evaluatedRepo.save(evaluated);
-						if (evalu.size()>1 ) {
-							for(Evaluator e:evalu.stream().filter(c->!Objects.equals(c.getId(), dto.getId())).collect(Collectors.toList())) {
-								if(!e.getFinish()) {
-									status=false;
-									break;
-								}
-							}
-							if(!status) {
-									body = "<html>Estimados lideres <br/> <br/> Se le notifica que el l&iacuteder " + evaluation.getNameEvaluator().toUpperCase()
-										+ " "
-										+ "ha culminado la evaluacion de Performance del colaborador  " + evaluated.getName().toUpperCase() +" <br/> <br/> "
-										+ "Ya puede ingresar a evaluarlo haciendo <a href='https://personas-hispam.telefonica.com' >click aqu&iacute.</a> <br/> <br/> <br/>" 
-										+ "Un saludo </html>";
-								
-							}else {
-								
-							
-								body = "<html>Estimados lideres <br/> <br/> Se le notifica que todos los lideres culminaron con la evaluacion del colaborador "
-										+ evaluated.getName().toUpperCase()+" <br/> <br/>" 
-										+ "El promedio de calificacion es " + average + "<br/> <br/> <br/>"
-										+ "Un saludo </html>";
-								
-							}
-							String from = "personas.solucionesdigitales@telefonica.com";
-							String subject = "Notificacion del Proceso de Performance";
-							MailDTO mail = new MailDTO(from,!status? evalu.stream().filter(c->!c.getFinish()).map(Evaluator::getEmailEvaluator).collect(Collectors.toList()):
-								evalu.stream().map(Evaluator::getEmailEvaluator).collect(Collectors.toList()), new ArrayList<>(),
-									new ArrayList<>(),subject, body, new ArrayList<>());
-							mailService.sendMail(Arrays.asList(mail));
-						}
-						evaRepo.save(evaluation);
-					}
-				}).start();
-			}
 			evaRepo.save(evaluation);			
 			if (dto.isTerminated()) {
 					sendEmail(evaluation, dto);
@@ -192,7 +148,7 @@ public class EvaluatorServiceImpl implements IEvaluatorService {
 							subject, 
 							body, 
 							new ArrayList<>());
-					mailService.sendMail(Arrays.asList(mail));
+					sharedService.sendMail(Arrays.asList(mail));
 				}, ()->{
 					String body;
 					body = "<html>Estimados lideres <br/> <br/> Se le notifica que todos los lideres culminaron con la evaluacion del colaborador "
@@ -206,7 +162,7 @@ public class EvaluatorServiceImpl implements IEvaluatorService {
 							subject, 
 							body, 
 							new ArrayList<>());
-					 mailService.sendMail(Arrays.asList(mail));
+					sharedService.sendMail(Arrays.asList(mail));
 					
 				});
 				evaRepo.save(evaluator);
@@ -219,6 +175,20 @@ public class EvaluatorServiceImpl implements IEvaluatorService {
 	public PageResponseDTO<TrackingInterface> tracking(int page, int vsize) {
 		int total = evaRepo.countTracking();
 		return new PageResponseDTO<>(page, vsize, total, evaRepo.tracking(page * vsize, vsize));
+	}
+	
+	@Override
+	public void sendReport(Integer process,Integer idrepo,String email,Integer user) {
+		
+		List<Object[]> data = evaRepo.reportEvaluacion(process);
+		DataReport info = new DataReport();
+		info.setData(data);
+		info.setModule("performance");
+		info.setReport(idrepo);
+		info.setEmail(email);
+		info.setUser(user);
+		sharedService.generateReport(info);
+		
 	}
 
 }

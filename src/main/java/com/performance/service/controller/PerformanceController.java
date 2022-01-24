@@ -33,7 +33,6 @@ public class PerformanceController {
 	
 	@GetMapping("/find/team")
 	public List<ProcessTeamDTO> findTeam(@RequestHeader String user){
-		user="gherson.perez@telefonica.com";
 		return evaService.getTeams(user);
 	}
 	@GetMapping("/find/evaluation")
@@ -68,5 +67,24 @@ public class PerformanceController {
 	public OperationResponse saveAutoevaluation(@RequestBody EvaluationDTO dto){
 		
 		return evatedService.saveAutoEvaluation(dto);
+	}
+	
+	@GetMapping("/report/autoevaluacion")
+	public void reportAutoevaluacion(	
+			@RequestParam Integer report,
+			@RequestParam List<String> filters,
+			@RequestHeader String email,
+			@RequestHeader Integer user){
+		
+		evatedService.sendReport(Integer.parseInt(filters.get(0)), report, email, user);
+	}
+	@GetMapping("/report/evaluacion")
+	public void reportEvaluacion(	
+			@RequestParam Integer report,
+			@RequestParam List<String> filters,
+			@RequestHeader String email,
+			@RequestHeader Integer user){
+		
+		evaService.sendReport(Integer.parseInt(filters.get(0)), report, email, user);
 	}
 }

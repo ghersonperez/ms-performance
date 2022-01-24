@@ -18,5 +18,7 @@ public interface IEvaluatorService {
 	OperationResponse saveEvaluation(EvaluationDTO dto,String email);
 	
 	PageResponseDTO<TrackingInterface> tracking(int page,int vsize);
+	
+	void sendReport(Integer process,Integer idrepo,String email,Integer user);
 
 }

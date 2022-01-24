@@ -23,5 +23,8 @@ public interface IEvaluatorRepository extends JpaRepository<Evaluator, Integer> 
 	
 	List<Evaluator> findByIdEvaluated(Integer idevaluated);
 	
+	@Query(nativeQuery=true, value="call sp_report_evaluacion(?1)")
+	public List<Object[]> reportEvaluacion(Integer process);
+	
 
 }
