@@ -73,8 +73,7 @@ public class PerformanceController {
 	public void reportAutoevaluacion(	
 			@RequestParam Integer report,
 			@RequestParam List<String> filters,
-			@RequestHeader String user,
-			@RequestHeader Integer id){
+			@RequestHeader String user){
 		
 		evatedService.sendReport(Integer.parseInt(filters.get(0)), report, user, 2434);
 	}
@@ -82,8 +81,7 @@ public class PerformanceController {
 	public void reportEvaluacion(	
 			@RequestParam Integer report,
 			@RequestParam List<String> filters,
-			@RequestHeader String user,
-			@RequestHeader Integer id){
+			@RequestHeader String user){
 		
 		evaService.sendReport(Integer.parseInt(filters.get(0)), report, user, 2434);
 	}
