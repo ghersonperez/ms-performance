@@ -1,17 +1,20 @@
 package com.performance.service.controller;
 
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.performance.service.dto.DetailEvaluationDTO;
 import com.performance.service.dto.EvaluationDTO;
 import com.performance.service.dto.PerformanceProcessDTO;
 import com.performance.service.dto.ProcessTeamDTO;
@@ -47,10 +50,10 @@ public class PerformanceController {
 	}
 	
 	@GetMapping("/tracking")
-	public PageResponseDTO<TrackingInterface> tracking(	@RequestParam int page, 
+	public PageResponseDTO<TrackingInterface> tracking(	@RequestParam int page, @RequestParam Optional<String> filter,
 			@RequestParam int vsize){
 		
-		return evaService.tracking(page, vsize);
+		return evaService.tracking(filter.orElse(""),page, vsize);
 	}
 	@GetMapping("/find/myprocess")
 	public List<PerformanceProcessDTO> findmyProcess(@RequestHeader String user){
@@ -84,5 +87,29 @@ public class PerformanceController {
 			@RequestHeader String user){
 		
 		evaService.sendReport(Integer.parseInt(filters.get(0)), report, user, 2434);
+	}
+	
+	@GetMapping("/tracking/detail")
+	public DetailEvaluationDTO detail(	
+			@RequestParam Integer ideva){
+		return evaService.getDetail(ideva);
+	}
+	
+	@PutMapping("/tracking/edit")
+	public OperationResponse edit(	
+			@RequestBody DetailEvaluationDTO dto){
+		return evaService.updateEvaluation(dto);
+	}
+	
+	@PostMapping("/tracking/new")
+	public OperationResponse save(	
+			@RequestBody DetailEvaluationDTO dto){
+		return evaService.save(dto);
+	}
+	
+	@GetMapping("/tracking/delete")
+	public OperationResponse delete(	
+			@RequestParam Integer id){
+		return evaService.delete(id);
 	}
 }
