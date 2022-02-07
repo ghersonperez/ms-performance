@@ -27,5 +27,10 @@ public class EvaluationDTO {
 	private Integer calification;
 	private boolean terminated;
 	private Integer status;
+	List<GoalCommentDTO> commtOpen;
+	List<GoalCommentDTO> commtChallen;
+	List<GoalCommentDTO> commtTrust;
+	List<GoalCommentDTO> commtFinally;
+	private String receipt;
 
 }

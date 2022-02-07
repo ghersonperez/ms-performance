@@ -2,6 +2,7 @@ package com.performance.service.dto;
 
 public interface TrackingInterface {
 	public Integer getId();
+	public Integer getIdEvaluated();
 	public String  getIdssff();
 	public String  getName();
 	public String  getGender();

@@ -26,6 +26,7 @@ import com.performance.shared.dto.PageResponseDTO;
 
 @RestController()
 @RequestMapping("/performance/v1/api")
+@CrossOrigin("*")
 public class PerformanceController {
 
 	@Autowired

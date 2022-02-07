@@ -35,5 +35,6 @@ public class Evaluated extends BaseEntity {
 	private Boolean finish;
 	private Boolean enter;
 	private Integer status;
+	private String receipt;
 
 }

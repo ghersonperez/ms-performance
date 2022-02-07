@@ -17,4 +17,8 @@ public interface IGoalCommentRepository extends JpaRepository<GoalComment,Intege
 	Optional<GoalComment> findByIdGoalAndIdEvaluator(Integer idgoal,Integer tor);
 	@Transactional
 	void deleteByIdEvaluator(Integer id);
+	
+	List<GoalComment> findByIdGoal(Integer id);
+	
+	List<GoalComment> findByIdEvaluator(Integer id);
 }

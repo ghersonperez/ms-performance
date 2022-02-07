@@ -1,5 +1,7 @@
 package com.performance.service.dto;
 
+import java.util.List;
+
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -15,5 +17,6 @@ public class GoalCommentDTO {
 	private String goalDescription;
 	private String comment;
 	private String autoComment;
+	List<GoalCommentDTO> comments;
 
 }

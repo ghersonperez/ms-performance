@@ -78,12 +78,16 @@ public class EvaluatorServiceImpl implements IEvaluatorService {
 						.map(c -> new GoalCommentDTO(c.getId(), c.getGoalDescription(),
 								commentRepo.findByIdGoalAndIdEvaluator(c.getId(), tor.getId()).orElse(new GoalComment())
 										.getComment(),
-								c.getAutoComment()))
+								c.getAutoComment(),null))
 						.collect(Collectors.toList()),
 				tor.getCompanyOpen(), tor.getCompanyChallenging(), tor.getCompanyTrustworthy(),
 				tor.getCommentaryFinally(), eva.getCompanyOpen(), eva.getCompanyChallenging(),
 				eva.getCompanyTrustworthy(), eva.getCommentaryFinally(), tor.getCalification(), tor.getFinish(),
-				eva.getStatus());
+				eva.getStatus(),
+				null,
+				null,
+				null,
+				null,null);
 	}
 
 	@Override
@@ -215,7 +219,7 @@ public class EvaluatorServiceImpl implements IEvaluatorService {
 				eva.getBu(), 
 				eva.getLocation(),
 				goalRepo.findByIdEvaluated(tor.getIdEvaluated()).stream()
-				.map(c -> new GoalCommentDTO(c.getId(), c.getGoalDescription(),null,null))
+				.map(c -> new GoalCommentDTO(c.getId(), c.getGoalDescription(),null,null,null))
 				.collect(Collectors.toList()),
 				eva.getEmailEvaluated(),
 				eva.getCodPo(),
