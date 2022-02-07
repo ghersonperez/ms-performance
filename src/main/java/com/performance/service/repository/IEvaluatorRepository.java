@@ -15,11 +15,11 @@ public interface IEvaluatorRepository extends JpaRepository<Evaluator, Integer> 
 	
 	@Query(nativeQuery = true, value = "call sp_team_performance(?1)")
 	List<TeamInterface> searchTeam(String idssff);
-	@Query(nativeQuery = true, value = "call sp_tracking(?1,?2)")
-	List<TrackingInterface> tracking(int page,int vsize);
+	@Query(nativeQuery = true, value = "call sp_tracking(?1,?2,?3)")
+	List<TrackingInterface> tracking(int page,int vsize,String filter);
 	
-	@Query(nativeQuery = true, value = "call sp_count_tracking()")
-	Integer countTracking();
+	@Query(nativeQuery = true, value = "call sp_count_tracking(?1)")
+	Integer countTracking(String filter);
 	
 	List<Evaluator> findByIdEvaluated(Integer idevaluated);
 	

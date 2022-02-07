@@ -13,6 +13,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
+import com.performance.service.dto.DetailEvaluationDTO;
 import com.performance.service.dto.EvaluationDTO;
 import com.performance.service.dto.GoalCommentDTO;
 import com.performance.service.dto.MyTeamDTO;
@@ -20,6 +21,7 @@ import com.performance.service.dto.ProcessTeamDTO;
 import com.performance.service.dto.TrackingInterface;
 import com.performance.service.entity.Evaluated;
 import com.performance.service.entity.Evaluator;
+import com.performance.service.entity.Goal;
 import com.performance.service.entity.GoalComment;
 import com.performance.service.repository.IEvaluatedRepository;
 import com.performance.service.repository.IEvaluatorRepository;
@@ -172,9 +174,10 @@ public class EvaluatorServiceImpl implements IEvaluatorService {
 
 
 	@Override
-	public PageResponseDTO<TrackingInterface> tracking(int page, int vsize) {
-		int total = evaRepo.countTracking();
-		return new PageResponseDTO<>(page, vsize, total, evaRepo.tracking(page * vsize, vsize));
+	public PageResponseDTO<TrackingInterface> tracking(String filter ,int page, int vsize) {
+		filter = "%"+filter.replace(" ", "%")+"%";
+		int total = evaRepo.countTracking(filter);
+		return new PageResponseDTO<>(page, vsize, total, evaRepo.tracking(page * vsize, vsize,filter));
 	}
 	
 	@Override
@@ -190,5 +193,157 @@ public class EvaluatorServiceImpl implements IEvaluatorService {
 		sharedService.generateReport(info);
 		
 	}
+
+	@Override
+	public DetailEvaluationDTO getDetail(Integer idevaluator) {
+		
+		Evaluator tor = evaRepo.findById(idevaluator)
+				.orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, errormessage));
+		Evaluated eva = evaluatedRepo.findById(tor.getIdEvaluated())
+				.orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Autoevaluacion no encontrada"));
+		
+		
+		return new DetailEvaluationDTO(idevaluator,
+				tor.getIdssffEvaluator(), 
+				tor.getEmailEvaluator(), 
+				tor.getNameEvaluator(),
+				eva.getIdssff(), 
+				eva.getName(), 
+				eva.getGender(), 
+				eva.getDepartment(), 
+				eva.getPosition(), 
+				eva.getBu(), 
+				eva.getLocation(),
+				goalRepo.findByIdEvaluated(tor.getIdEvaluated()).stream()
+				.map(c -> new GoalCommentDTO(c.getId(), c.getGoalDescription(),null,null))
+				.collect(Collectors.toList()),
+				eva.getEmailEvaluated(),
+				eva.getCodPo(),
+				eva.getDedication(),
+				tor.getCodPo(),
+				tor.getGender(),
+				tor.getBu(),
+				tor.getDepartment(),
+				tor.getPosition(),
+				tor.getDedication(),eva.getIdProcess()
+				);
+		
+	}
+
+	@Override
+	public OperationResponse updateEvaluation(DetailEvaluationDTO dto) {
+		OperationResponse response ;
+		try {
+			Evaluator tor = evaRepo.findById(dto.getIdEvaluator())
+					.orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, errormessage));
+			tor.setIdssffEvaluator(dto.getIdssffEvaluator());
+			tor.setNameEvaluator(dto.getNameEvaluator());
+			tor.setEmailEvaluator(dto.getEmailEvaluator());
+			tor.setCodPo(dto.getCodPoEvaluator());
+			tor.setPosition(dto.getPositionEvaluator());
+			tor.setGender(dto.getGenderEvaluator());
+			tor.setBu(dto.getBuEvaluator());
+			tor.setDepartment(dto.getDepartamentEvaluator());
+			tor.setDedication(dto.getDedicationTor());
+			evaRepo.save(tor);
+			Evaluated eva = evaluatedRepo.findById(tor.getIdEvaluated()).orElse(null);
+			if(eva!=null) {
+				eva.setGender(dto.getGenderEvaluated());
+				eva.setDepartment(dto.getDepartmentEvaluated());
+				eva.setPosition(dto.getPositionEvaluated());
+				eva.setBu(dto.getBuEvaluated());
+				evaluatedRepo.save(eva);
+			}
+			response = new OperationResponse(true, "Ok");
+		} catch (Exception e) {
+			response = new OperationResponse(false, e.getMessage());
+		}
+		return response;
+	}
+
+	@Override
+	public OperationResponse save(DetailEvaluationDTO dto) {
+		OperationResponse response ;
+		try {
+			
+			Evaluated eva = evaluatedRepo.findByIdssff(dto.getIdssffEvaluated()).orElse(null);
+			if(eva==null){
+				eva = new  Evaluated();
+				eva.setIdssff(dto.getIdssffEvaluated());
+				eva.setName(dto.getNameEvaluated());
+				eva.setEmailEvaluated(dto.getEmailEvaluated());
+				eva.setGender(dto.getGenderEvaluated());
+				eva.setDepartment(dto.getDepartmentEvaluated());
+				eva.setCodPo(dto.getCodPoEvaluated());
+				eva.setDedication(dto.getDedicationEva());
+				eva.setPosition(dto.getPositionEvaluated());
+				eva.setBu(dto.getBuEvaluated());
+				eva.setIdProcess(dto.getIdprocess());
+				eva.setLocation(dto.getLocationEvaluated());
+				eva.setEnter(false);
+				eva.setFinish(false);
+				eva.setStatus(0);
+				eva.setCreatedBy("master");
+				eva.setCreatedAt(new Date());
+				eva=evaluatedRepo.save(eva);
+				for(GoalCommentDTO g : dto.getGoals()) {
+					goalRepo.save(new Goal(null, eva.getId(), g.getGoalDescription(), null));
+				}
+			}
+
+				Evaluator tor = new Evaluator();
+				tor.setIdssffEvaluator(dto.getIdssffEvaluator());
+				tor.setNameEvaluator(dto.getNameEvaluator());
+				tor.setEmailEvaluator(dto.getEmailEvaluator());
+				tor.setCodPo(dto.getCodPoEvaluator());
+				tor.setPosition(dto.getPositionEvaluator());
+				tor.setGender(dto.getGenderEvaluator());
+				tor.setBu(dto.getBuEvaluator());
+				tor.setDepartment(dto.getDepartamentEvaluator());
+				tor.setDedication(dto.getDedicationTor());
+				tor.setIdEvaluated(eva.getId());
+				tor.setIdProcess(dto.getIdprocess());
+				tor.setEnter(false);
+				tor.setFinish(false);
+				tor.setCalification(0);
+				tor.setCreatedBy("master");
+				tor.setCreatedAt(new Date());
+				tor = evaRepo.save(tor);
+				response =new OperationResponse(true, "Exito");
+			
+		} catch (Exception e) {
+			response =new OperationResponse(false, e.getMessage());
+			 
+		}
+		return response;
+	}
+
+	@Override
+	
+	public OperationResponse delete(Integer id) {
+		try {
+			Evaluator tor = evaRepo.findById(id)
+					.orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, errormessage));
+			Evaluated eva = evaluatedRepo.findById(tor.getIdEvaluated())
+					.orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Autoevaluacion no encontrada"));
+			if(tor.getEnter()){
+				return new OperationResponse(false, "No se puede eliminar por que el evaluador ya avanzo con la evaluación");
+			}
+			if(eva.getEnter()) {
+				return new OperationResponse(false, "No se puede eliminar por que el evaluado ya avanzo con la autoevaluación");
+			}
+			commentRepo.deleteByIdEvaluator(tor.getId());
+			evaRepo.deleteById(tor.getId());
+			goalRepo.deleteByIdEvaluated(eva.getId());
+			evaluatedRepo.deleteById(eva.getId());
+			return new OperationResponse(true, "Exito");
+		} catch (Exception e) {
+			System.out.println(e.getMessage());
+			return new OperationResponse(false, "Error al eliminar");
+		}
+		
+	}
+	
+	
 
 }

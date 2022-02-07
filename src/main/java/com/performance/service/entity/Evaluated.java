@@ -18,17 +18,19 @@ public class Evaluated extends BaseEntity {
 	
 	private String idssff;
 	private String name;
+	private String emailEvaluated;
 	private String gender;
 	private String department;
+	private String codPo;
+	private String dedication;
 	private String position;
 	private String bu;
 	private Integer idProcess;
-	
+	private String location;
 	private String companyOpen;
 	private String companyChallenging;
 	private String companyTrustworthy;
 	private String commentaryFinally;
-	private String emailEvaluated;
 	private Integer calification;
 	private Boolean finish;
 	private Boolean enter;
