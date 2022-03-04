@@ -19,7 +19,7 @@ spec:
     spec:
       containers:
         - name: ms-performance
-          image: acrhispam.azurecr.io/ms-performance:0.0.8
+          image: acrhispam.azurecr.io/ms-performance:0.0.9
 
           imagePullPolicy: Always
           ports:

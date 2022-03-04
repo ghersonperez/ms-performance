@@ -32,5 +32,6 @@ public class EvaluationDTO {
 	List<GoalCommentDTO> commtTrust;
 	List<GoalCommentDTO> commtFinally;
 	private String receipt;
+	private String name;
 
 }

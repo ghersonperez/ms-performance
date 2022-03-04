@@ -2,6 +2,7 @@ package com.performance.service.entity;
 
 import javax.persistence.Entity;
 
+
 import com.performance.shared.dto.BaseEntity;
 
 import lombok.AllArgsConstructor;
@@ -37,4 +38,5 @@ public class Evaluated extends BaseEntity {
 	private Integer status;
 	private String receipt;
 
+	
 }

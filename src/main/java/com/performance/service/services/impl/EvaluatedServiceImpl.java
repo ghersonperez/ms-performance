@@ -71,7 +71,7 @@ public class EvaluatedServiceImpl implements IEvaluatedService {
 						.map(c -> new GoalCommentDTO(c.getId(), c.getGoalDescription(), c.getAutoComment(), null, null))
 						.collect(Collectors.toList()),
 				eva.getCompanyOpen(), eva.getCompanyChallenging(), eva.getCompanyTrustworthy(),
-				eva.getCommentaryFinally(), null, null, null, null, null, eva.getFinish(), eva.getStatus(),null,null,null,null,null);
+				eva.getCommentaryFinally(), null, null, null, null, null, eva.getFinish(), eva.getStatus(),null,null,null,null,null,eva.getName());
 
 		if (eva.getStatus() == 2) {
 			List<GoalCommentDTO> open = new ArrayList<>();
