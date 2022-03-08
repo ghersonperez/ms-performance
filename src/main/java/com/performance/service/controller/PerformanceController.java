@@ -112,4 +112,9 @@ public class PerformanceController {
 			@RequestParam Integer id){
 		return evaService.delete(id);
 	}
+	
+	@GetMapping("/tracking/promedio")
+	public void promedio(){
+		evaService.promediar();
+	}
 }

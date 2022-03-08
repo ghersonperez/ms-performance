@@ -26,5 +26,7 @@ public interface IEvaluatorRepository extends JpaRepository<Evaluator, Integer> 
 	@Query(nativeQuery=true, value="call sp_report_evaluacion(?1)")
 	public List<Object[]> reportEvaluacion(Integer process);
 	
+	@Query(nativeQuery = true, value = "select * from evaluator where id_evaluated=?1")
+	List<Evaluator> findId(Integer id);
 
 }

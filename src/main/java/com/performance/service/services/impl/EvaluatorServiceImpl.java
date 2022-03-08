@@ -157,10 +157,22 @@ public class EvaluatorServiceImpl implements IEvaluatorService {
 					sharedService.sendMail(Arrays.asList(mail));
 				}, ()->{
 					String body;
+					String bodyColaborador;
 					body = "<html>Estimados lideres <br/> <br/> Se le notifica que todos los lideres culminaron con la evaluacion del colaborador "
 							+ evaluated.getName().toUpperCase() + " <br/> <br/>"
 							+ "El promedio de calificacion es " + average + "<br/> <br/> <br/>"
 							+ "Un saludo </html>";
+					bodyColaborador="<html>\r\n"
+							+ "    <h2 style=\"font-weight: 600; font-size: 1.5rem\">Hola "+evaluated.getName().toUpperCase()+","+"</h2>\r\n"
+							+ "\r\n"
+							+ "    <div style=\"font-size: 1.1rem\">Se te notifica que el documento de <b>Telefonica Performance Review 2021</b> \r\n"
+							+ "        está ahora disponible en la carpeta de la bandeja de entrada de Performance (Web de Personas Hispam) para <b> Acuse de Recibo.</b> </div>\r\n"
+							+ "</br>\r\n"
+							+ "    <div  style=\"margin-top: 10px; font-size: 1.1rem\"> Puedes acceder a el documento en el siguiente enlace: <a href='https://personas-hispam.telefonica.com' >click aqu&iacute.</a></div>\r\n"
+							+ "</br>\r\n"
+							+ "   <div style=\"margin-top: 10px;font-size: 1.1rem\">Personas Hispam</div> \r\n"
+							+ "    \r\n"
+							+ "</html>";
 					MailDTO mail = new MailDTO(from,  
 							evalu.stream().map(Evaluator::getEmailEvaluator).collect(Collectors.toList()),
 							new ArrayList<>(), 
@@ -168,7 +180,15 @@ public class EvaluatorServiceImpl implements IEvaluatorService {
 							subject, 
 							body, 
 							new ArrayList<>());
+					MailDTO mail2 = new MailDTO(from,  
+							Arrays.asList(evaluated.getEmailEvaluated()),
+							new ArrayList<>(), 
+							new ArrayList<>(), 
+							subject, 
+							bodyColaborador, 
+							new ArrayList<>());
 					sharedService.sendMail(Arrays.asList(mail));
+					sharedService.sendMail(Arrays.asList(mail2));
 					
 				});
 				evaRepo.save(evaluator);
@@ -346,6 +366,16 @@ public class EvaluatorServiceImpl implements IEvaluatorService {
 			return new OperationResponse(false, "Error al eliminar");
 		}
 		
+	}
+	@Override
+	public void promediar() {
+		
+		evaluatedRepo.findAllProcess().forEach(c->{
+			List<Evaluator> tor =	evaRepo.findId(c.getId());
+			Integer average = (int) Math.round(tor.stream().mapToInt(Evaluator::getCalification).average().getAsDouble());
+			c.setCalification(average);
+			evaluatedRepo.save(c);
+		});
 	}
 	
 	

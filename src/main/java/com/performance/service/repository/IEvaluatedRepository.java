@@ -18,5 +18,8 @@ public interface IEvaluatedRepository extends JpaRepository<Evaluated, Integer>{
 	public List<Object[]> reportAutoevaluacion(Integer process);
 	
 	Optional<Evaluated> findByIdssff(String idssff);
+	
+	@Query(nativeQuery=true, value="select distinct eva.* from evaluated eva left join evaluator tor on tor.id_evaluated=eva.id where tor.calification>0 and eva.id_process=1")
+	List<Evaluated> findAllProcess();
 
 }

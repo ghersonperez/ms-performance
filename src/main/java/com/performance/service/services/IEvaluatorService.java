@@ -29,5 +29,6 @@ public interface IEvaluatorService {
 	OperationResponse save(DetailEvaluationDTO dto);
 	
 	OperationResponse delete(Integer id);
+	void promediar();
 
 }
