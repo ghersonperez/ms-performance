@@ -30,5 +30,6 @@ public interface IEvaluatorService {
 	
 	OperationResponse delete(Integer id);
 	void promediar();
+	void sendMail();
 
 }

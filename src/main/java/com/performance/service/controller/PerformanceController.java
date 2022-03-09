@@ -117,4 +117,10 @@ public class PerformanceController {
 	public void promedio(){
 		evaService.promediar();
 	}
+	
+	@GetMapping("/tracking/sendmail")
+	public void sendCorreo(){
+		evaService.sendMail();
+	}
+	
 }

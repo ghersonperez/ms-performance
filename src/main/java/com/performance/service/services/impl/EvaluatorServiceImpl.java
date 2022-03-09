@@ -377,6 +377,39 @@ public class EvaluatorServiceImpl implements IEvaluatorService {
 			evaluatedRepo.save(c);
 		});
 	}
+
+	@Override
+	public void sendMail() {
+		
+		String from = "personas.solucionesdigitales@telefonica.com";
+		String subject = "Notificacion del Proceso de Performance";
+		evaluatedRepo.findAllProcess().forEach(c->{
+		String	bodyColaborador="<html>\r\n"
+					+ "    <h2 style=\"font-weight: 600; font-size: 1.5rem\">Hola "+c.getName().toUpperCase()+","+"</h2>\r\n"
+					+ "\r\n"
+					+ "    <div style=\"font-size: 1.1rem\">Se te notifica que el documento de <b>Telefonica Performance Review 2021</b> \r\n"
+					+ "        est&aacute ahora disponible en la carpeta de la bandeja de entrada de Performance (Web de Personas Hispam) para <b> Acuse de Recibo.</b> </div>\r\n"
+					+ "</br>\r\n"
+					+ "    <div  style=\"margin-top: 10px; font-size: 1.1rem\"> Puedes acceder al documento en el siguiente enlace: <a href='https://personas-hispam.telefonica.com' >click aqu&iacute.</a></div>\r\n"
+					+ "</br>\r\n"
+					+ "   <div style=\"margin-top: 10px;font-size: 1.1rem\">Personas Hispam</div> \r\n"
+					+ "    \r\n"
+					+ "</html>";
+		MailDTO mail2 = new MailDTO(from,  
+				Arrays.asList(c.getEmailEvaluated()),
+				new ArrayList<>(), 
+				new ArrayList<>(), 
+				subject, 
+				bodyColaborador, 
+				new ArrayList<>());
+			sharedService.sendMail(Arrays.asList(mail2));
+			c.setFinish(true);
+			c.setEnter(true);
+			c.setStatus(2);
+			evaluatedRepo.save(c);
+		});
+		
+	}
 	
 	
 

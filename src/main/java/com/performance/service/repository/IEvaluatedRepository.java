@@ -19,7 +19,10 @@ public interface IEvaluatedRepository extends JpaRepository<Evaluated, Integer>{
 	
 	Optional<Evaluated> findByIdssff(String idssff);
 	
-	@Query(nativeQuery=true, value="select distinct eva.* from evaluated eva left join evaluator tor on tor.id_evaluated=eva.id where tor.calification>0 and eva.id_process=1")
+	@Query(nativeQuery=true, value="select  distinct  e.* from evaluated e left join evaluator tor on tor.id_evaluated=e.id where tor.finish =1 and e.id_process =1")
 	List<Evaluated> findAllProcess();
+	
+	
+
 
 }
