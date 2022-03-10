@@ -187,7 +187,7 @@ public class EvaluatorServiceImpl implements IEvaluatorService {
 							subject, 
 							bodyColaborador, 
 							new ArrayList<>());
-					evaluated.setStatus(3);
+					evaluated.setStatus(2);
 					evaluatedRepo.save(evaluated);
 					sharedService.sendMail(Arrays.asList(mail));
 					sharedService.sendMail(Arrays.asList(mail2));
@@ -214,7 +214,7 @@ public class EvaluatorServiceImpl implements IEvaluatorService {
 						subject, 
 						bodyColaborador, 
 						new ArrayList<>());
-				evaluated.setStatus(3);
+				evaluated.setStatus(2);
 				evaluatedRepo.save(evaluated);
 				sharedService.sendMail(Arrays.asList(mail2));
 			}
