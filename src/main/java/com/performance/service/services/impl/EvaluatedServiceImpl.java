@@ -158,6 +158,8 @@ public class EvaluatedServiceImpl implements IEvaluatedService {
 					}).start();
 					evaluation.setStatus(1);
 				}
+			}if(dto.getStatus()==2) {
+				evaluation.setStatus(3);
 			}
 			evaluatedRepo.save(evaluation);
 			return new OperationResponse(true, dto.getId());
