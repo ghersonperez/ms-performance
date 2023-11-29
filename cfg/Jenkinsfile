@@ -38,17 +38,13 @@ pipeline {
 						sh 'mvn clean install'
                     }
                 }
+
 				stage('Build') {
                     steps {
 						sh 'mvn -f pom.xml clean install -DskipTests'
                     }
                 }
-				stage('Publish'){
-					environment {
-						ARTIFACT_ID = readMavenPom().getArtifactId()
-						ENV_SHORT = "${config.enviroment_short}"
-					}
-				}
+
 				stage('Package'){
 					environment {
 						VERSION = readMavenPom().getVersion()
