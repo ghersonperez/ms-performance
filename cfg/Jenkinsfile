@@ -38,16 +38,6 @@ pipeline {
 						sh 'mvn clean install'
                     }
                 }
-				stage('Scan') {
-					steps{
-						script {
-						  scannerHome = tool 'sonarQube'
-						}
-						withSonarQubeEnv('sonarQube') {
-						  sh "${scannerHome}/bin/sonar-scanner -Dproject.settings=cfg/sonar.properties"
-						}
-					}
-				}
 				stage('Build') {
                     steps {
 						sh 'mvn -f pom.xml clean install -DskipTests'
@@ -57,24 +47,6 @@ pipeline {
 					environment {
 						ARTIFACT_ID = readMavenPom().getArtifactId()
 						ENV_SHORT = "${config.enviroment_short}"
-					}
-					steps{
-						rtServer (
-						    id: 'artifactoryServer',
-						    url: 'http://sonar-artifact-hispam.eastus.cloudapp.azure.com:8082',
-						    credentialsId: 'user_artifactory'
-						)
-						rtUpload (
-						    serverId: 'artifactoryServer',
-						    spec: '''{
-								  "files": [
-									{
-									  "pattern": "target/${ARTIFACT_ID}*.jar",
-									  "target": "artifactory/hispam-mvn-${ENV_SHORT}/"
-									}
-								 ]
-							}'''
-						)
 					}
 				}
 				stage('Package'){
