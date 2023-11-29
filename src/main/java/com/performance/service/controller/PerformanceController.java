@@ -3,6 +3,8 @@ package com.performance.service.controller;
 import java.util.List;
 import java.util.Optional;
 
+import com.performance.service.dto.*;
+import com.performance.service.services.CalibrationService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -14,11 +16,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.performance.service.dto.DetailEvaluationDTO;
-import com.performance.service.dto.EvaluationDTO;
-import com.performance.service.dto.PerformanceProcessDTO;
-import com.performance.service.dto.ProcessTeamDTO;
-import com.performance.service.dto.TrackingInterface;
 import com.performance.service.services.IEvaluatedService;
 import com.performance.service.services.IEvaluatorService;
 import com.performance.shared.dto.OperationResponse;
@@ -33,6 +30,9 @@ public class PerformanceController {
 	
 	@Autowired
 	private IEvaluatedService evatedService;
+
+	@Autowired
+	private CalibrationService calibrationService;
 	
 	@GetMapping("/find/team")
 	public List<ProcessTeamDTO> findTeam(@RequestHeader String user){
@@ -121,6 +121,14 @@ public class PerformanceController {
 	@GetMapping("/tracking/sendmail")
 	public void sendCorreo(){
 		evaService.sendMail();
+	}
+	@PostMapping("/calibration/table")
+	public List<CalibrationProjection> getCalificationCalibration(@RequestBody CalibrationRequest request){
+		return calibrationService.getCalification(request);
+	}
+	@PostMapping("/calibration/graphics")
+	public CalibrationGraphics getCalificationGraphics(@RequestBody CalibrationRequest request){
+		return calibrationService.getCalificationGraphics(request);
 	}
 	
 }
