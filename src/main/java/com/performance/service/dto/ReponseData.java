@@ -8,11 +8,8 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class CalibrationTableInformation {
+public class ReponseData {
 
-    private Boolean status;
-    private String message;
-    private ReponseData objective;
-
-
+    private List<CalibrationProjection> content;
+    private Integer total;
 }
