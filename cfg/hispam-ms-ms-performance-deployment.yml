@@ -67,6 +67,11 @@ metadata:
     nginx.ingress.kubernetes.io/cors-allow-headers: "request-id, request-date, content-type"
     nginx.ingress.kubernetes.io/cors-allow-methods: "PUT, GET, POST, DELETE, PATCH, OPTIONS"
     cert-manager.io/cluster-issuer: letsencrypt-hispam
+    nginx.ingress.kubernetes.io/proxy-read-timeout: "120s"
+    nginx.ingress.kubernetes.io/proxy-send-timeout: "120s"
+    nginx.ingress.kubernetes.io/proxy-connect-timeout: "120s"
+    nginx.ingress.kubernetes.io/proxy-next-upstream-timeout: "0"
+    nginx.ingress.kubernetes.io/proxy-next-upstream-tries: "3"
     nginx.ingress.kubernetes.io/configuration-snippet: |
       more_set_headers "Ingress: $ingress_name";
 spec:
