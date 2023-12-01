@@ -16,4 +16,6 @@ public class CalibrationRequest {
     private List<String> idssffEvaluated;
     private Integer idProcess;
     private Integer total;
+    private String idssff;
+    private Integer page;
 }

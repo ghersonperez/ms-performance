@@ -33,11 +33,17 @@ public interface IEvaluatedRepository extends JpaRepository<Evaluated, Integer>{
 
 	@Query(nativeQuery=true, value="call sp_get_calification_total(?1,?2)")
 	List<CalificationResume> getCalificationResume(String idssffEvaluated, Integer process);
+	@Query(nativeQuery=true, value="call sp_get_califications_count(?1,?2,?3,?4)")
+	int getCalificationCount(String idssffEvaluated, String lstIdssffevaluated,String calification,Integer process);
+
+	@Query(nativeQuery=true, value="call sp_get_califications(?1,?2,?3,?4,?5,?6)")
+	List<CalibrationProjection> getCalificationList(String idssffEvaluated, String lstIdssffevaluated,String calification,Integer process,Integer vsize,Integer page);
 
 
 
-	
-	
+
+
+
 
 
 }

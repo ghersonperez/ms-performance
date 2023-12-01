@@ -3,6 +3,7 @@ package com.performance.service.services.impl;
 import com.performance.service.dto.CalibrationGraphics;
 import com.performance.service.dto.CalibrationProjection;
 import com.performance.service.dto.CalibrationRequest;
+import com.performance.service.dto.CalibrationTableInformation;
 import com.performance.service.repository.IEvaluatedRepository;
 import com.performance.service.services.CalibrationService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,9 +19,20 @@ public class CalibrationServiceimpl implements CalibrationService {
     IEvaluatedRepository calibrationRepo;
 
     @Override
-    public List<CalibrationProjection> getCalification(CalibrationRequest request) {
+    public CalibrationTableInformation getCalification(CalibrationRequest request) {
         String idssff = String.join(",", request.getIdssffEvaluated());
-        return calibrationRepo.getListCalibration(idssff,request.getLstCalification(),request.getIdProcess());
+
+        String vidssff = "%" + request.getIdssff()+ "%";
+        int cant = calibrationRepo.getCalificationCount(vidssff,idssff,
+                request.getLstCalification(),request.getIdProcess());
+    int vsize=10;
+        return CalibrationTableInformation.builder()
+                .total(cant)
+                .status(true)
+                .message("ok")
+                .content(calibrationRepo.getCalificationList(vidssff,idssff,
+                        request.getLstCalification(),request.getIdProcess(),vsize,request.getPage()*vsize))
+                .build();
     }
 
     @Override

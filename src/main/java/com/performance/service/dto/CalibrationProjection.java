@@ -4,7 +4,7 @@ public interface CalibrationProjection {
 
     public String getCalanterior();
     public String getCalification();
-    public String getIdssffevaluated();
+    public String getIdssff_evaluated();
 
     public String getIsautomatic();
 

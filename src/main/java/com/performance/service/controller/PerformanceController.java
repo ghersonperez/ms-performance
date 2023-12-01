@@ -123,7 +123,7 @@ public class PerformanceController {
 		evaService.sendMail();
 	}
 	@PostMapping("/calibration/table")
-	public List<CalibrationProjection> getCalificationCalibration(@RequestBody CalibrationRequest request){
+	public CalibrationTableInformation getCalificationCalibration(@RequestBody CalibrationRequest request){
 		return calibrationService.getCalification(request);
 	}
 	@PostMapping("/calibration/graphics")
