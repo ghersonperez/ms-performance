@@ -1,21 +1,24 @@
 def config;
 node(){
-    configFileProvider([configFile(fileId: params.CONFIG_ID, targetLocation: 'config')]) {
+ def fileId
+    if ("${env.JOB_BASE_NAME}" == 'develop') {
+        fileId = 'e739f5b7-27df-4f83-bd2a-7450d396412c'  // ID del archivo para la rama "develop"
+    } else if ("${env.JOB_BASE_NAME}" == 'main') {
+        fileId = '65047eb2-2a7d-4afc-bf15-4461e842c721'  // ID del archivo para la rama "main"
+    }
+    configFileProvider([configFile(fileId: fileId, targetLocation: 'config')]) {
         config = readJSON file: 'config'
     }
 }
-
 pipeline {
-            agent any
+           agent any
 			options {
 				skipDefaultCheckout(true)
 			}
-
 			tools{
 				maven 'maven-default'
 				dockerTool 'docker'
 			}
-
             stages {
 				stage('CleanWorkspace') {
                     steps {
@@ -28,28 +31,43 @@ pipeline {
                     }
                 }
                 stage('UnitTest') {
-                    steps {
-						script {
-							if("${config.enviroment}"=='develop' && !readFile('pom.xml').contains('SNAPSHOT')){
-								currentBuild.result = 'FAILURE'
-								error("No se encontró una versión SNAPSHOT.")
-							}
-						}
-						sh 'mvn clean install'
-                    }
-                }
-
+                                     steps {
+                 						script {
+                 							if("${config.enviroment}"=='develop' && !readFile('pom.xml').contains('SNAPSHOT')){
+                 								currentBuild.result = 'FAILURE'
+                 								error("No se encontró una versión SNAPSHOT.")
+                 							}
+                 						}
+                 						sh 'mvn package -Dmaven.test.skip'
+                                     }
+                                 }
+                stage('Scan') {
+                					steps{
+                						script {
+                						  scannerHome = tool 'sonarQube'
+                						}
+                						withSonarQubeEnv('sonarQube') {
+                						  sh "${scannerHome}/bin/sonar-scanner -Dproject.settings=cfg/sonar.properties"
+                						}
+                					}
+                				}
 				stage('Build') {
                     steps {
 						sh 'mvn -f pom.xml clean install -DskipTests'
                     }
+                         post{
+                               failure{
+                                 script {
+                                   slackSend( channel: "despliegues",  message: "El proyecto ${ARTIFACT_ID} sufrió un error en el despliegue")
+                                       }
+                                     }
+                              }
                 }
-
 				stage('Package'){
 					environment {
 						VERSION = readMavenPom().getVersion()
 						ARTIFACT_ID = readMavenPom().getArtifactId()
-						NAME = "${env.JOB_BASE_NAME}"
+						NAME = "${ARTIFACT_ID}"
 					}
 					steps{
 						withCredentials([azureServicePrincipal('user_azure')]) {
@@ -77,9 +95,32 @@ pipeline {
 						withCredentials([azureServicePrincipal('user_azure')]) {
 							sh 'az login --service-principal -u $AZURE_CLIENT_ID -p $AZURE_CLIENT_SECRET -t $AZURE_TENANT_ID'
 							sh 'az aks get-credentials --name ${AKS} --resource-group ${RESOURCE_GROUP} --admin --overwrite-existing'
-							sh 'kubectl apply -f ./cfg/hispam-ms-${ARTIFACT_ID}-deployment.yml'
+							sh 'kubectl apply -f ./cfg/${ARTIFACT_ID}-deployment.yml'
 						}
 					}
-				}
-            }
+            }/*
+            	stage('Publishing'){
+            			environment {
+            					ARTIFACT_ID = readMavenPom().getArtifactId()
+            					AKS = "${config.aks}"
+            					RESOURCE_GROUP = "${config.resource_group}"
+            					    }
+            					steps{
+            					sh '/root/.dotnet/tools/dotnet-apim -c "./cfg/api/apim-service.yml" -o "./cfg/output"'
+            					sh 'az group deployment create --resource-group ${RESOURCE_GROUP} --template-file "./cfg/output/apim_deploy.template.json" --parameters "./cfg/output/parameters.json"'
+            					    }
+            					post{
+                                     failure{
+                                       script {
+                                             slackSend( channel: "despliegues",  message: "El proyecto ${ARTIFACT_ID} sufrió un error en el despliegue")
+                                         }
+                                     }
+                                     success{
+                                            script {
+                                                slackSend( channel: "despliegues",  message: "El proyecto ${ARTIFACT_ID} desplegó con éxito")
+                                            }
+                                     }
+            				}
+                        }*/
         }
+     }
