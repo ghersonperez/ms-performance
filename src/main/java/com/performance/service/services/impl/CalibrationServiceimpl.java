@@ -6,6 +6,7 @@ import com.performance.service.services.CalibrationService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -38,10 +39,15 @@ public class CalibrationServiceimpl implements CalibrationService {
     @Override
     public CalibrationGraphics getCalificationGraphics(CalibrationRequest request) {
         String idssff = String.join(",", request.getIdssffEvaluated());
-
+        System.out.println("Iniciando consulta table " + new Date());
+        List<CalificationTable> table =calibrationRepo.getListCalibrationTable(idssff,request.getIdProcess(),request.getTotal());
+        System.out.println("Terminando consulta table " + new Date());
+        System.out.println("Iniciando consulta resumen " + new Date());
+        List<CalificationResume> resume =calibrationRepo.getCalificationResume(idssff,request.getIdProcess());
+        System.out.println("Terminando consulta resumen " + new Date());
         return CalibrationGraphics.builder()
-                .table(calibrationRepo.getListCalibrationTable(idssff,request.getIdProcess(),request.getTotal()))
-                .resume(calibrationRepo.getCalificationResume(idssff,request.getIdProcess()))
+                .table(table)
+                .resume(resume)
                 .build();
     }
 }
