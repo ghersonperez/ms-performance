@@ -1,12 +1,14 @@
 package com.performance.shared.dto;
 
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
 
 @Getter
 @Setter
 @AllArgsConstructor
+@Builder
 public class OperationResponse {
 	private boolean status;
 	private String message;

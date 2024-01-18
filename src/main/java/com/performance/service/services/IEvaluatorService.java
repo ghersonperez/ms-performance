@@ -2,10 +2,7 @@ package com.performance.service.services;
 
 import java.util.List;
 
-import com.performance.service.dto.DetailEvaluationDTO;
-import com.performance.service.dto.EvaluationDTO;
-import com.performance.service.dto.ProcessTeamDTO;
-import com.performance.service.dto.TrackingInterface;
+import com.performance.service.dto.*;
 import com.performance.shared.dto.OperationResponse;
 import com.performance.shared.dto.PageResponseDTO;
 
@@ -29,5 +26,9 @@ public interface IEvaluatorService {
 	OperationResponse save(DetailEvaluationDTO dto);
 	
 	OperationResponse delete(Integer id);
+
+	List<CalificationCalibrationProjection> getCalificationCalibration(String idssff , Integer process);
+
+	OperationResponse saveComment(CommentCalibrationDTO dto);
 
 }

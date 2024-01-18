@@ -1,0 +1,22 @@
+version: 0.0.1
+apimServiceName: apigmr-dev-hispam
+apiVersionSets:
+  - name: OdinVersion
+    displayName: Odin padre de todo
+    description: Contains the APIs.
+    versioningScheme: Segment
+apis:
+  - name: odinEndpoint
+    type: http
+    description: Odin padre de todo
+    serviceUrl: http://52.249.212.205/recruiting/v1
+    openApiSpec: ./cfg/api/api-docs.json
+    #policy: ./cfg/api/apiPolicyHeaders.xml
+    path: recruiting
+    subscriptionRequired: true
+    isCurrent: true
+    apiVersion: v1
+    apiVersionSetId: OdinVersion
+    apiRevision: 1
+    apiVersionDescription: My first version
+    products: hispam

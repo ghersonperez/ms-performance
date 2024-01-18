@@ -8,26 +8,14 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
+import com.performance.service.dto.*;
+import com.performance.service.entity.*;
+import com.performance.service.repository.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
-import com.performance.service.dto.DetailEvaluationDTO;
-import com.performance.service.dto.EvaluationDTO;
-import com.performance.service.dto.GoalCommentDTO;
-import com.performance.service.dto.MyTeamDTO;
-import com.performance.service.dto.ProcessTeamDTO;
-import com.performance.service.dto.TrackingInterface;
-import com.performance.service.entity.Evaluated;
-import com.performance.service.entity.Evaluator;
-import com.performance.service.entity.Goal;
-import com.performance.service.entity.GoalComment;
-import com.performance.service.repository.IEvaluatedRepository;
-import com.performance.service.repository.IEvaluatorRepository;
-import com.performance.service.repository.IGoalCommentRepository;
-import com.performance.service.repository.IGoalRepository;
-import com.performance.service.repository.IProcessRepository;
 import com.performance.service.services.IEvaluatorService;
 import com.performance.shared.dto.DataReport;
 import com.performance.shared.dto.MailDTO;
@@ -51,6 +39,9 @@ public class EvaluatorServiceImpl implements IEvaluatorService {
 
 	@Autowired
 	private SharedService sharedService;
+
+	@Autowired
+	private ICommentCalibrationRepository commentCalibrationRepository;
 	
 	String errormessage ="Evaluacion no encontrada";
 
@@ -347,7 +338,33 @@ public class EvaluatorServiceImpl implements IEvaluatorService {
 		}
 		
 	}
-	
-	
+
+	@Override
+	public List<CalificationCalibrationProjection> getCalificationCalibration(String idssff, Integer process) {
+		return  evaluatedRepo.getCalificationCalibration(idssff,process);
+	}
+
+	@Override
+	public OperationResponse saveComment(CommentCalibrationDTO dto) {
+		try {
+			commentCalibrationRepository.save(CommentCalibration.builder()
+							.comment(dto.getComment())
+							.createdAt(new Date())
+							.idssffComment(dto.getIdsff())
+							.idCalification(dto.getIdCalification())
+					.build() );
+			return OperationResponse.builder()
+					.status(true)
+					.message("ok")
+					.build();
+		}catch (Exception ex){
+			return OperationResponse.builder()
+					.status(false)
+					.message(ex.getMessage())
+					.build();
+		}
+
+	}
+
 
 }

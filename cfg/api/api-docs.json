@@ -1,0 +1,1249 @@
+{
+  "openapi": "3.0.1",
+  "info": {
+    "title": "Performance API",
+    "description": "Servicio para Performance",
+    "termsOfService": "https://personas-hispam.telefonica.com/",
+    "contact": {
+      "name": "Gherson Perez",
+      "url": "https://personas-hispam.telefonica.com/",
+      "email": "gherson.perez@telefonica.com"
+    },
+    "license": {
+      "name": "LICENSE"
+    },
+    "version": "0.0.2"
+  },
+  "servers": [
+    {
+      "url": "http://52.249.212.205/performance/v1"
+    }
+  ],
+  "tags": [
+    {
+      "name": "performance-controller",
+      "description": "Performance Controller"
+    }
+  ],
+  "paths": {
+    "/api/calibration/comment": {
+      "post": {
+        "tags": [
+          "performance-controller"
+        ],
+        "summary": "saveComment",
+        "operationId": "saveCommentUsingPOST",
+        "requestBody": {
+          "description": "dto",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CommentCalibrationDTO"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/OperationResponse"
+                }
+              }
+            }
+          },
+          "201": {
+            "description": "Created",
+            "content": {}
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {}
+          },
+          "403": {
+            "description": "Forbidden",
+            "content": {}
+          },
+          "404": {
+            "description": "Not Found",
+            "content": {}
+          }
+        },
+        "deprecated": false,
+        "x-codegen-request-body-name": "dto"
+      }
+    },
+    "/api/calification/leader": {
+      "get": {
+        "tags": [
+          "performance-controller"
+        ],
+        "summary": "getCalificationCalibrationIdssff",
+        "operationId": "getCalificationCalibrationIdssffUsingGET",
+        "parameters": [
+          {
+            "name": "idssff",
+            "in": "query",
+            "description": "idssff",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "process",
+            "in": "query",
+            "description": "process",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/CalificationCalibrationProjection"
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {}
+          },
+          "403": {
+            "description": "Forbidden",
+            "content": {}
+          },
+          "404": {
+            "description": "Not Found",
+            "content": {}
+          }
+        },
+        "deprecated": false
+      }
+    },
+    "/api/find/auto-evaluation": {
+      "get": {
+        "tags": [
+          "performance-controller"
+        ],
+        "summary": "findAutoevaluation",
+        "operationId": "findAutoevaluationUsingGET",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "query",
+            "description": "id",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/EvaluationDTO"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {}
+          },
+          "403": {
+            "description": "Forbidden",
+            "content": {}
+          },
+          "404": {
+            "description": "Not Found",
+            "content": {}
+          }
+        },
+        "deprecated": false
+      }
+    },
+    "/api/find/evaluation": {
+      "get": {
+        "tags": [
+          "performance-controller"
+        ],
+        "summary": "findEvaluation",
+        "operationId": "findEvaluationUsingGET",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "query",
+            "description": "id",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/EvaluationDTO"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {}
+          },
+          "403": {
+            "description": "Forbidden",
+            "content": {}
+          },
+          "404": {
+            "description": "Not Found",
+            "content": {}
+          }
+        },
+        "deprecated": false
+      }
+    },
+    "/api/find/myprocess": {
+      "get": {
+        "tags": [
+          "performance-controller"
+        ],
+        "summary": "findmyProcess",
+        "operationId": "findmyProcessUsingGET",
+        "parameters": [
+          {
+            "name": "user",
+            "in": "header",
+            "description": "user",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/PerformanceProcessDTO"
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {}
+          },
+          "403": {
+            "description": "Forbidden",
+            "content": {}
+          },
+          "404": {
+            "description": "Not Found",
+            "content": {}
+          }
+        },
+        "deprecated": false
+      }
+    },
+    "/api/find/team": {
+      "get": {
+        "tags": [
+          "performance-controller"
+        ],
+        "summary": "findTeam",
+        "operationId": "findTeamUsingGET",
+        "parameters": [
+          {
+            "name": "user",
+            "in": "header",
+            "description": "user",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/ProcessTeamDTO"
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {}
+          },
+          "403": {
+            "description": "Forbidden",
+            "content": {}
+          },
+          "404": {
+            "description": "Not Found",
+            "content": {}
+          }
+        },
+        "deprecated": false
+      }
+    },
+    "/api/report/autoevaluacion": {
+      "get": {
+        "tags": [
+          "performance-controller"
+        ],
+        "summary": "reportAutoevaluacion",
+        "operationId": "reportAutoevaluacionUsingGET",
+        "parameters": [
+          {
+            "name": "filters",
+            "in": "query",
+            "description": "filters",
+            "required": true,
+            "style": "form",
+            "explode": true,
+            "schema": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            }
+          },
+          {
+            "name": "report",
+            "in": "query",
+            "description": "report",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          },
+          {
+            "name": "user",
+            "in": "header",
+            "description": "user",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {}
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {}
+          },
+          "403": {
+            "description": "Forbidden",
+            "content": {}
+          },
+          "404": {
+            "description": "Not Found",
+            "content": {}
+          }
+        },
+        "deprecated": false
+      }
+    },
+    "/api/report/evaluacion": {
+      "get": {
+        "tags": [
+          "performance-controller"
+        ],
+        "summary": "reportEvaluacion",
+        "operationId": "reportEvaluacionUsingGET",
+        "parameters": [
+          {
+            "name": "filters",
+            "in": "query",
+            "description": "filters",
+            "required": true,
+            "style": "form",
+            "explode": true,
+            "schema": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            }
+          },
+          {
+            "name": "report",
+            "in": "query",
+            "description": "report",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          },
+          {
+            "name": "user",
+            "in": "header",
+            "description": "user",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {}
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {}
+          },
+          "403": {
+            "description": "Forbidden",
+            "content": {}
+          },
+          "404": {
+            "description": "Not Found",
+            "content": {}
+          }
+        },
+        "deprecated": false
+      }
+    },
+    "/api/save/autoevaluation": {
+      "post": {
+        "tags": [
+          "performance-controller"
+        ],
+        "summary": "saveAutoevaluation",
+        "operationId": "saveAutoevaluationUsingPOST",
+        "parameters": [
+          {
+            "name": "user",
+            "in": "header",
+            "description": "user",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "description": "dto",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/EvaluationDTO"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/OperationResponse"
+                }
+              }
+            }
+          },
+          "201": {
+            "description": "Created",
+            "content": {}
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {}
+          },
+          "403": {
+            "description": "Forbidden",
+            "content": {}
+          },
+          "404": {
+            "description": "Not Found",
+            "content": {}
+          }
+        },
+        "deprecated": false,
+        "x-codegen-request-body-name": "dto"
+      }
+    },
+    "/api/save/evaluation": {
+      "post": {
+        "tags": [
+          "performance-controller"
+        ],
+        "summary": "saveEvaluation",
+        "operationId": "saveEvaluationUsingPOST",
+        "parameters": [
+          {
+            "name": "user",
+            "in": "header",
+            "description": "user",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "description": "dto",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/EvaluationDTO"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/OperationResponse"
+                }
+              }
+            }
+          },
+          "201": {
+            "description": "Created",
+            "content": {}
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {}
+          },
+          "403": {
+            "description": "Forbidden",
+            "content": {}
+          },
+          "404": {
+            "description": "Not Found",
+            "content": {}
+          }
+        },
+        "deprecated": false,
+        "x-codegen-request-body-name": "dto"
+      }
+    },
+    "/api/tracking": {
+      "get": {
+        "tags": [
+          "performance-controller"
+        ],
+        "summary": "tracking",
+        "operationId": "trackingUsingGET",
+        "parameters": [
+          {
+            "name": "filter",
+            "in": "query",
+            "description": "filter",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "page",
+            "in": "query",
+            "description": "page",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          },
+          {
+            "name": "vsize",
+            "in": "query",
+            "description": "vsize",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/PageResponseDTOOfTrackingInterface"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {}
+          },
+          "403": {
+            "description": "Forbidden",
+            "content": {}
+          },
+          "404": {
+            "description": "Not Found",
+            "content": {}
+          }
+        },
+        "deprecated": false
+      }
+    },
+    "/api/tracking/delete": {
+      "get": {
+        "tags": [
+          "performance-controller"
+        ],
+        "summary": "delete",
+        "operationId": "deleteUsingGET",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "query",
+            "description": "id",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/OperationResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {}
+          },
+          "403": {
+            "description": "Forbidden",
+            "content": {}
+          },
+          "404": {
+            "description": "Not Found",
+            "content": {}
+          }
+        },
+        "deprecated": false
+      }
+    },
+    "/api/tracking/detail": {
+      "get": {
+        "tags": [
+          "performance-controller"
+        ],
+        "summary": "detail",
+        "operationId": "detailUsingGET",
+        "parameters": [
+          {
+            "name": "ideva",
+            "in": "query",
+            "description": "ideva",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/DetailEvaluationDTO"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {}
+          },
+          "403": {
+            "description": "Forbidden",
+            "content": {}
+          },
+          "404": {
+            "description": "Not Found",
+            "content": {}
+          }
+        },
+        "deprecated": false
+      }
+    },
+    "/api/tracking/edit": {
+      "put": {
+        "tags": [
+          "performance-controller"
+        ],
+        "summary": "edit",
+        "operationId": "editUsingPUT",
+        "requestBody": {
+          "description": "dto",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/DetailEvaluationDTO"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/OperationResponse"
+                }
+              }
+            }
+          },
+          "201": {
+            "description": "Created",
+            "content": {}
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {}
+          },
+          "403": {
+            "description": "Forbidden",
+            "content": {}
+          },
+          "404": {
+            "description": "Not Found",
+            "content": {}
+          }
+        },
+        "deprecated": false,
+        "x-codegen-request-body-name": "dto"
+      }
+    },
+    "/api/tracking/new": {
+      "post": {
+        "tags": [
+          "performance-controller"
+        ],
+        "summary": "save",
+        "operationId": "saveUsingPOST",
+        "requestBody": {
+          "description": "dto",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/DetailEvaluationDTO"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/OperationResponse"
+                }
+              }
+            }
+          },
+          "201": {
+            "description": "Created",
+            "content": {}
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {}
+          },
+          "403": {
+            "description": "Forbidden",
+            "content": {}
+          },
+          "404": {
+            "description": "Not Found",
+            "content": {}
+          }
+        },
+        "deprecated": false,
+        "x-codegen-request-body-name": "dto"
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "CalificationCalibrationProjection": {
+        "title": "CalificationCalibrationProjection",
+        "type": "object",
+        "properties": {
+          "calibrated": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "calibration": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "calification": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "comment": {
+            "type": "string"
+          },
+          "commentcali": {
+            "type": "string"
+          },
+          "created": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "createdcomment": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "evaluator": {
+            "type": "string"
+          },
+          "id": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "success": {
+            "type": "integer",
+            "format": "int32"
+          }
+        }
+      },
+      "CommentCalibrationDTO": {
+        "title": "CommentCalibrationDTO",
+        "type": "object",
+        "properties": {
+          "comment": {
+            "type": "string"
+          },
+          "idCalification": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "idsff": {
+            "type": "string"
+          }
+        }
+      },
+      "DetailEvaluationDTO": {
+        "title": "DetailEvaluationDTO",
+        "type": "object",
+        "properties": {
+          "buEvaluated": {
+            "type": "string"
+          },
+          "buEvaluator": {
+            "type": "string"
+          },
+          "codPoEvaluated": {
+            "type": "string"
+          },
+          "codPoEvaluator": {
+            "type": "string"
+          },
+          "dedicationEva": {
+            "type": "string"
+          },
+          "dedicationTor": {
+            "type": "string"
+          },
+          "departamentEvaluator": {
+            "type": "string"
+          },
+          "departmentEvaluated": {
+            "type": "string"
+          },
+          "emailEvaluated": {
+            "type": "string"
+          },
+          "emailEvaluator": {
+            "type": "string"
+          },
+          "genderEvaluated": {
+            "type": "string"
+          },
+          "genderEvaluator": {
+            "type": "string"
+          },
+          "goals": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/GoalCommentDTO"
+            }
+          },
+          "idEvaluator": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "idprocess": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "idssffEvaluated": {
+            "type": "string"
+          },
+          "idssffEvaluator": {
+            "type": "string"
+          },
+          "locationEvaluated": {
+            "type": "string"
+          },
+          "nameEvaluated": {
+            "type": "string"
+          },
+          "nameEvaluator": {
+            "type": "string"
+          },
+          "positionEvaluated": {
+            "type": "string"
+          },
+          "positionEvaluator": {
+            "type": "string"
+          }
+        }
+      },
+      "EvaluationDTO": {
+        "title": "EvaluationDTO",
+        "type": "object",
+        "properties": {
+          "autoChallenging": {
+            "type": "string"
+          },
+          "autoCommentFinally": {
+            "type": "string"
+          },
+          "autoOpen": {
+            "type": "string"
+          },
+          "autoTrust": {
+            "type": "string"
+          },
+          "calification": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "challenging": {
+            "type": "string"
+          },
+          "commentFinally": {
+            "type": "string"
+          },
+          "commtChallen": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/GoalCommentDTO"
+            }
+          },
+          "commtFinally": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/GoalCommentDTO"
+            }
+          },
+          "commtOpen": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/GoalCommentDTO"
+            }
+          },
+          "commtTrust": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/GoalCommentDTO"
+            }
+          },
+          "goals": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/GoalCommentDTO"
+            }
+          },
+          "id": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "open": {
+            "type": "string"
+          },
+          "receipt": {
+            "type": "string"
+          },
+          "status": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "terminated": {
+            "type": "boolean"
+          },
+          "trust": {
+            "type": "string"
+          }
+        }
+      },
+      "GoalCommentDTO": {
+        "title": "GoalCommentDTO",
+        "type": "object",
+        "properties": {
+          "autoComment": {
+            "type": "string"
+          },
+          "comment": {
+            "type": "string"
+          },
+          "comments": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/GoalCommentDTO"
+            }
+          },
+          "goalDescription": {
+            "type": "string"
+          },
+          "idGoal": {
+            "type": "integer",
+            "format": "int32"
+          }
+        }
+      },
+      "MyTeamDTO": {
+        "title": "MyTeamDTO",
+        "type": "object",
+        "properties": {
+          "advance": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "bu": {
+            "type": "string"
+          },
+          "gender": {
+            "type": "string"
+          },
+          "id": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "idprocess": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "idssff": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          },
+          "position": {
+            "type": "string"
+          }
+        }
+      },
+      "OperationResponse": {
+        "title": "OperationResponse",
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "message": {
+            "type": "string"
+          },
+          "previous": {
+            "type": "string"
+          },
+          "status": {
+            "type": "boolean"
+          }
+        }
+      },
+      "PageResponseDTOOfTrackingInterface": {
+        "title": "PageResponseDTOOfTrackingInterface",
+        "type": "object",
+        "properties": {
+          "content": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/TrackingInterface"
+            }
+          },
+          "page": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "size": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "total": {
+            "type": "integer",
+            "format": "int32"
+          }
+        }
+      },
+      "PerformanceProcessDTO": {
+        "title": "PerformanceProcessDTO",
+        "type": "object",
+        "properties": {
+          "enable": {
+            "type": "boolean"
+          },
+          "id": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "name": {
+            "type": "string"
+          },
+          "period": {
+            "type": "string"
+          },
+          "status": {
+            "type": "integer",
+            "format": "int32"
+          }
+        }
+      },
+      "ProcessTeamDTO": {
+        "title": "ProcessTeamDTO",
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "name": {
+            "type": "string"
+          },
+          "period": {
+            "type": "string"
+          },
+          "status": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "team": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/MyTeamDTO"
+            }
+          }
+        }
+      },
+      "TrackingInterface": {
+        "title": "TrackingInterface",
+        "type": "object",
+        "properties": {
+          "bu": {
+            "type": "string"
+          },
+          "department": {
+            "type": "string"
+          },
+          "evafini": {
+            "type": "string"
+          },
+          "evain": {
+            "type": "string"
+          },
+          "evaluator": {
+            "type": "string"
+          },
+          "gender": {
+            "type": "string"
+          },
+          "id": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "idEvaluated": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "idssff": {
+            "type": "string"
+          },
+          "location": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          },
+          "position": {
+            "type": "string"
+          },
+          "torfin": {
+            "type": "string"
+          },
+          "torin": {
+            "type": "string"
+          }
+        }
+      }
+    }
+  },
+  "x-original-swagger-version": "2.0"
+}

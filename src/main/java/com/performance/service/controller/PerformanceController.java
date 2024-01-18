@@ -3,6 +3,7 @@ package com.performance.service.controller;
 import java.util.List;
 import java.util.Optional;
 
+import com.performance.service.dto.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -14,11 +15,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.performance.service.dto.DetailEvaluationDTO;
-import com.performance.service.dto.EvaluationDTO;
-import com.performance.service.dto.PerformanceProcessDTO;
-import com.performance.service.dto.ProcessTeamDTO;
-import com.performance.service.dto.TrackingInterface;
 import com.performance.service.services.IEvaluatedService;
 import com.performance.service.services.IEvaluatorService;
 import com.performance.shared.dto.OperationResponse;
@@ -112,5 +108,17 @@ public class PerformanceController {
 	public OperationResponse delete(	
 			@RequestParam Integer id){
 		return evaService.delete(id);
+	}
+
+	@GetMapping("/calification/leader")
+	public List<CalificationCalibrationProjection> getCalificationCalibrationIdssff(
+			@RequestParam String idssff , @RequestParam Integer process){
+		return evaService.getCalificationCalibration(idssff,process);
+	}
+
+	@PostMapping("/calibration/comment")
+	public OperationResponse saveComment(
+			@RequestBody CommentCalibrationDTO dto){
+		return evaService.saveComment(dto);
 	}
 }
